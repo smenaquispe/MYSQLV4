@@ -34,8 +34,8 @@ void Disk::loadFile() {
             bool band = false;
 
 
-            for(int i = 0; i < file->totalRegisterBytes; i++) {
- 
+            for(int i = 0; i <= file->totalRegisterBytes; i++) {
+                
                 if(buffer[i] != ' ' && !band){
                     metaSector<<i<<" ";
                     band = true;
@@ -44,7 +44,7 @@ void Disk::loadFile() {
                 
                 
                 if(i == acumulateColumn) {
-                    if(buffer[i] != ' ')
+                    if(buffer[i] != ' ' && i != file->totalRegisterBytes)
                         sector.write(&buffer[i], 1);
                     metaSector<<i<<" , ";
                     acumulateColumn += file->columnBytes[++column];
@@ -52,7 +52,8 @@ void Disk::loadFile() {
                 }
 
                 if(band){
-                    sector.write(&buffer[i], 1);
+                    if(i != file->totalRegisterBytes)
+                        sector.write(&buffer[i], 1);
                 }                              
             }      
 
