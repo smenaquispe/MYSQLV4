@@ -24,9 +24,11 @@ public:
 
     void printSector();
     void printSector(int numberSector);
-
+    void findRecord(int idRecord);
 };
 
+
 #include"printSector.h"
+#include"findRecord.h"
 
 #endif

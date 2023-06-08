@@ -14,18 +14,22 @@ void Disk::loadFile() {
         int contadorRegistros = 0; // cuenta los registros quer son alamacenados en un sector
         this->numTotalSectores = 0; // cuenta el numero total de sectores que son almacenados en el disco
 
-        ofstream metaSector;
-        ofstream sector;
-        
+        ofstream metaSector; // metadata de cada sector
+        ofstream sector; // file donde se almacena la informacion del sector
+        ofstream directory; // directorio de metadata, sobre que registros se guardan en ciertos sectores
+
         sector.open("./Disk/data/sectors/" + to_string(numTotalSectores));
         metaSector.open("./Disk/data/meta/sectors/" + to_string(numTotalSectores));
+
+        directory.open("./Disk/data/meta/directory");
+        directory<<numTotalSectores<<" ";
 
 
         while (true)
         {
             f.seekg(posicionInicio, std::ios::beg);  // Establecer la posición de lectura
             f.read(buffer, file->totalRegisterBytes);  // Leer el segmento en el buffer
-            
+
             if(f.eof()) break;
 
             // necesarios para alamacenar informacion de como limitan las columnas de tamaño variable
@@ -33,27 +37,39 @@ void Disk::loadFile() {
             int acumulateColumn = file->columnBytes[0];
             bool band = false;
 
+            stringstream id; // guarda los ids de cada registro
 
             for(int i = 0; i <= file->totalRegisterBytes; i++) {
                 
                 if(buffer[i] != ' ' && !band){
                     metaSector<<i<<" ";
                     band = true;
-                    //sector.write(&buffer[i], 1);
                 }
                 
-                
                 if(i == acumulateColumn) {
-                    if(buffer[i] != ' ' && i != file->totalRegisterBytes)
+                    if(buffer[i] != ' ' && i != file->totalRegisterBytes) {
                         sector.write(&buffer[i], 1);
+                    }
+
                     metaSector<<i<<" , ";
                     acumulateColumn += file->columnBytes[++column];
                     band = false;
+                    
+                    // podemos guardar el id
+                    if(column == 1) {
+                        directory<<id.str()<<" ";
+                    }
                 }
 
                 if(band){
-                    if(i != file->totalRegisterBytes)
+                    if(i != file->totalRegisterBytes) {
                         sector.write(&buffer[i], 1);
+                        
+                        // significa que esta guardando el id
+                        if(column == 0) {
+                            id<<buffer[i]; 
+                        }
+                    }
                 }                              
             }      
 
@@ -64,8 +80,10 @@ void Disk::loadFile() {
                 contadorRegistros = 0;
                 sector.close(); 
                 metaSector.close();
- 
+
                 this->numTotalSectores++;
+                directory<<endl<<numTotalSectores<<" ";
+
                 sector.open("./Disk/data/sectors/" + to_string(numTotalSectores));
                 metaSector.open("./Disk/data/meta/sectors/" + to_string(numTotalSectores));
             }
@@ -81,6 +99,7 @@ void Disk::loadFile() {
         }
         
         f.close();
+        directory.close();
     } else {
         cout<<"No se pudo abrir el archivo file"<<endl;
     }
