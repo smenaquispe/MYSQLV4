@@ -12,6 +12,7 @@
 
 #include<iostream>
 #include"File/File.h"
+#include"Disk/Disk.h"
 using namespace std;
 
 int main() {
@@ -20,6 +21,10 @@ int main() {
     f.setCsv("./titanic.csv");
     f.extractSchema();
     f.toFile();
-    f.printFile();
+    
+    Disk d(&f);
+    d.loadFile();
+ 
+
     return 0;
 }
