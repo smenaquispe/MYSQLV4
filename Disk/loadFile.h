@@ -28,34 +28,42 @@ void Disk::loadFile() {
             
             if(f.eof()) break;
 
-            sector.write(buffer, file->totalRegisterBytes);
-
+            // necesarios para alamacenar informacion de como limitan las columnas de tamaño variable
             int column = 0;
             int acumulateColumn = file->columnBytes[0];
             bool band = false;
 
+
             for(int i = 0; i < file->totalRegisterBytes; i++) {
+ 
                 if(buffer[i] != ' ' && !band){
-                    metaSector<<i<<",";
+                    metaSector<<i<<" ";
                     band = true;
+                    //sector.write(&buffer[i], 1);
+                }
+                
+                
+                if(i == acumulateColumn) {
+                    if(buffer[i] != ' ')
+                        sector.write(&buffer[i], 1);
+                    metaSector<<i<<" , ";
+                    acumulateColumn += file->columnBytes[++column];
+                    band = false;
                 }
 
-                if(i == acumulateColumn) {
-                    metaSector<<i<<" ";
-                    acumulateColumn += file->columnBytes[++column];
-                    band = false; 
-                }
+                if(band){
+                    sector.write(&buffer[i], 1);
+                }                              
             }      
 
             metaSector<<endl;
-            
             contadorRegistros++;
 
             if(contadorRegistros == this->NUMBER_REGISTER_PER_SECTOR) {
                 contadorRegistros = 0;
                 sector.close(); 
                 metaSector.close();
-
+ 
                 this->numTotalSectores++;
                 sector.open("./Disk/data/sectors/" + to_string(numTotalSectores));
                 metaSector.open("./Disk/data/meta/sectors/" + to_string(numTotalSectores));

@@ -24,7 +24,8 @@ int main() {
     
     Disk d(&f);
     d.loadFile();
- 
+    
+    d.printSector(0);
 
     return 0;
 }

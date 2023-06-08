@@ -29,8 +29,10 @@ public:
     }
 
     void loadFile();
+    void printSector(int numberSector);
 };
 
 #include"loadFile.h"
+#include"printSector.h"
 
 #endif
