@@ -2,6 +2,7 @@
 #define DISK_H
 
 #include<fstream>
+#include"direct.h"
 #include"../File/File.h"
 
 class Disk
@@ -9,7 +10,11 @@ class Disk
 public:
 
     File * file;
+    
     int numTotalSectores;
+    int numTotalClusters;
+
+    int NUMBER_SECTORS_PER_CLUSTER = 3;
     int NUMBER_REGISTER_PER_SECTOR = 5;
     int lenBuffer;
     char * buffer;

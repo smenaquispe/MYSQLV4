@@ -14,9 +14,13 @@ void Disk::loadFile() {
         int contadorRegistros = 0; // cuenta los registros quer son alamacenados en un sector
         this->numTotalSectores = 0; // cuenta el numero total de sectores que son almacenados en el disco
 
+        ofstream metaSector;
         ofstream sector;
-        sector.open("./Disk/data/sectores/" + to_string(numTotalSectores));
         
+        sector.open("./Disk/data/sectors/" + to_string(numTotalSectores));
+        metaSector.open("./Disk/data/meta/sectors/" + to_string(numTotalSectores));
+
+
         while (true)
         {
             f.seekg(posicionInicio, std::ios::beg);  // Establecer la posición de lectura
@@ -25,14 +29,36 @@ void Disk::loadFile() {
             if(f.eof()) break;
 
             sector.write(buffer, file->totalRegisterBytes);
+
+            int column = 0;
+            int acumulateColumn = file->columnBytes[0];
+            bool band = false;
+
+            for(int i = 0; i < file->totalRegisterBytes; i++) {
+                if(buffer[i] != ' ' && !band){
+                    metaSector<<i<<",";
+                    band = true;
+                }
+
+                if(i == acumulateColumn) {
+                    metaSector<<i<<" ";
+                    acumulateColumn += file->columnBytes[++column];
+                    band = false; 
+                }
+            }      
+
+            metaSector<<endl;
+            
             contadorRegistros++;
 
             if(contadorRegistros == this->NUMBER_REGISTER_PER_SECTOR) {
                 contadorRegistros = 0;
                 sector.close(); 
+                metaSector.close();
 
                 this->numTotalSectores++;
-                sector.open("./Disk/data/sectores/" + to_string(this->numTotalSectores));    
+                sector.open("./Disk/data/sectors/" + to_string(numTotalSectores));
+                metaSector.open("./Disk/data/meta/sectors/" + to_string(numTotalSectores));
             }
 
             int caracteresLeidos = f.gcount();  // Obtener la cantidad de caracteres leídos
