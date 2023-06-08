@@ -14,6 +14,7 @@
 #include"File/File.h"
 #include"Disk/Disk.h"
 #include"Page/Page.h"
+#include"BufferManager/BufferManager.h"
 using namespace std;
 
 int main() {
@@ -26,8 +27,16 @@ int main() {
     Disk d(&f);
     d.loadFile();
 
-    Page p(3,5);
-    p.printSector();
+    // alamcena un máximo de 6 paginas
+    BufferManager manager(6);
+    manager.uploadPage(3,10);
+    manager.uploadPage(6,7);
+
+    manager.getPage(1);
+
+    manager.deletePage(1);
+
+    
     
     return 0;
 }

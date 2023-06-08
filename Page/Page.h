@@ -13,6 +13,8 @@ public:
     char * buffer;
     int lenBuffer = 1024;
 
+    Page() {}
+
     Page(int l1, int l2) : l1(l1), l2(l2) {
         buffer = new char[lenBuffer];
     }

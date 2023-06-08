@@ -1,7 +1,6 @@
 #ifndef BUFFER_MANAGER_H
 #define BUFFER_MANAGER_H
 
-#include<vector>
 #include"../Page/Page.h"
 
 using namespace std;
@@ -10,14 +9,25 @@ class BufferManager
 {
 public:
 
-    vector<Page *> pages;
+    Page * pages;
+    int lenPages;
+    int countPages;
 
     BufferManager(int lenPages) {
-        pages.resize(lenPages);
+        pages = new Page[lenPages];
+        this->lenPages = lenPages;
+        countPages = 0;
     }
 
     ~BufferManager() {}
+
+    void uploadPage(int l1, int l2);
+    void getPage(int numPage);
+    void deletePage(int numPage);
 };
 
+#include"getPage.h"
+#include"uploadPage.h"
+#include"deletePage.h"
 
 #endif
