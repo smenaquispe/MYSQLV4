@@ -13,6 +13,7 @@
 #include<iostream>
 #include"File/File.h"
 #include"Disk/Disk.h"
+#include"Page/Page.h"
 using namespace std;
 
 int main() {
@@ -24,8 +25,9 @@ int main() {
     
     Disk d(&f);
     d.loadFile();
-    
-    d.printSector(1);
 
+    Page p(3,5);
+    p.printSector();
+    
     return 0;
 }

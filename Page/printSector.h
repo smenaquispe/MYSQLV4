@@ -1,7 +1,13 @@
-#include"Disk.h"
+#include"Page.h"
 #include"../Utils/myStrtok.h"
 
-void Disk::printSector(int numberSector) {
+void Page::printSector() {
+    for(int i = l1; i <= l2; i++) {
+        printSector(i);
+    }    
+}
+
+void Page::printSector(int numberSector) {
     /*
         provicional:
             la idea es que el buffermanager levante una pagina  
