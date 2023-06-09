@@ -51,6 +51,9 @@ public:
     void deleteRecord(int idRecord);
     bool hasSpace();
     void printInfo();
+    void printInfoSector(int numberSector);
+    void printSize();
+    void printSizeSector(int numberSector);
 };
 
 
@@ -61,5 +64,8 @@ public:
 #include"hasSpace.h"
 #include"deleteRecord.h"
 #include"printInfo.h"
+#include"printSize.h"
+#include"printSizeSector.h"
+#include"printInfoSector.h"
 
 #endif
