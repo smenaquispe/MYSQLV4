@@ -28,12 +28,17 @@ int main() {
     d.loadFile();
 
     // alamcena un máximo de 6 paginas
-    BufferManager manager(6);
+    // los sectores almacenan 5 registros
+    BufferManager manager(6, 5);
+    
     manager.uploadPage(106,108);
+    manager.uploadPage(0, 5);
+    manager.uploadPage(175,178);
 
-    manager.getPage(0)->loadMeta();
+    manager.getPage(1)->deleteRecord(2);
 
-    
-    
+    d.loadFile();
+
+    manager.printPage(1);
     return 0;
 }

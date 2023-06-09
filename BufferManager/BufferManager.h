@@ -13,10 +13,14 @@ public:
     int lenPages;
     int countPages;
 
-    BufferManager(int lenPages) {
+    int NUMBER_REGISTER_PER_SECTOR;
+
+    BufferManager(int lenPages, int sectorLength) {
         pages = new Page[lenPages];
         this->lenPages = lenPages;
         countPages = 0;
+
+        this->NUMBER_REGISTER_PER_SECTOR = sectorLength;
     }
 
     ~BufferManager() {}

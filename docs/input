@@ -1,0 +1,12 @@
+PassengerId:
+Survived: 1
+Pclass: 3
+Name: "Jhonas Bro"
+Sex: male
+Age: 14
+SibSp: 0
+Parch: 
+Ticket: PA 14200
+Fare: 412.111
+Cabin: 
+Embarked: Q

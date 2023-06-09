@@ -37,8 +37,4 @@ void Page::loadMeta() {
         return;
     }
 
-    for (const auto& pair : freeSpace) {
-        std::cout << "Clave: " << pair.first << ", Valor: " << pair.second << std::endl;
-    }
-
 }
