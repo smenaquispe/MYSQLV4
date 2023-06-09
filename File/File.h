@@ -13,7 +13,10 @@ using namespace std;
 class File
 {
 public:
-    File() {
+    File(const char * csv) {
+
+        strcpy(this->csv, csv);
+
         // buffer necessary for read the file
         this->buffer = new char[lenBuffer];
         numberColumns = 0;
@@ -36,7 +39,6 @@ public:
     char *buffer;
 
     // methods
-    void setCsv(const char * csv) { strcpy(this->csv, csv); }
     void toFile();
     void extractSchema();
 

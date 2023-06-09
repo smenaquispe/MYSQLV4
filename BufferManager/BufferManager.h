@@ -8,12 +8,6 @@
 #include<vector>
 using namespace std;
 
-struct Node {
-    int firstRecord;
-    int lastRecord;
-    int sector;
-};
-
 class BufferManager
 {
 public:
@@ -29,27 +23,30 @@ public:
     int NUMBER_REGISTER_PER_SECTOR;
     int NUMBER_SECTORS_PER_CLUSTER;
 
-    vector<Node> recordTrack;
+    BufferManager(Disk * d, int a, int cluserSize) {
 
-    BufferManager(int lenPages, Disk * disk) {
+        this->disk = d;
+        this->NUMBER_SECTORS_PER_CLUSTER = cluserSize;
+
+        lenPages = d->numTotalSectores / this->NUMBER_SECTORS_PER_CLUSTER;
         
-        lenPages = disk->numTotalSectores / this->NUMBER_SECTORS_PER_CLUSTER;
-        
+        this->lenPages = a;
         pages = new Page[lenPages];
-        this->lenPages = lenPages;
+        
         
         countPages = 0;
 
         buffer = new char[lenBuffer];
         
-        this->NUMBER_REGISTER_PER_SECTOR = disk->NUMBER_REGISTER_PER_SECTOR;
+        this->NUMBER_REGISTER_PER_SECTOR = d->NUMBER_REGISTER_PER_SECTOR;
+        
     }
 
     ~BufferManager() {
         delete [] buffer;
     }
 
-    void uploadPage(int l1, int l2);
+    void uploadPage(int l1, int l2, int n, int p, int q);
     void uploadAllPages();
     Page * getPage(int numPage);
     void printPage(int numPage);
@@ -62,5 +59,6 @@ public:
 #include"deletePage.h"
 #include"printPage.h"
 #include"findRecord.h"
+#include"uploadAllPages.h"
 
 #endif

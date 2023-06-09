@@ -19,17 +19,32 @@ using namespace std;
 
 int main() {
 
-    File f;
-    f.setCsv("./titanic.csv");
+    File f("./titanic.csv");
     f.extractSchema();
     f.toFile();
-    
-    Disk d(&f);
+
+    /*
+        f -> leera el file f
+        5 platos
+        2 superficies (siempre)
+        7 pistas
+        4 -> cada pista almacena un maximo de 4 sectores
+        5 -> cada sector almacena el tamaño de 5 registros
+    */
+    Disk d(&f, 5, 7, 4, 5);
     d.loadFile();
 
     // alamcena un máximo de 6 paginas
-    // los sectores almacenan 5 registros
-    BufferManager manager(6, &d);
+    // leerá los datos del disco d
+
+    /*
+        d -> leera el disco d
+        70 -> levanta como máximo 70 paginas al mismo tiempo
+        3 -> cada bloque almacena 3 sectores como maximo
+    */
+    BufferManager manager(&d, 70, 3);
+
+    /*
     manager.uploadPage(106,108);
     manager.uploadPage(0, 5);
     manager.uploadPage(175,178);
@@ -38,8 +53,12 @@ int main() {
     manager.getPage(1)->deleteRecord(5);
 
     manager.getPage(1)->addRecord();
+    manager.printPage(0);
+    */
 
-    manager.printPage(1);
+    manager.uploadAllPages();
 
+    manager.getPage(5)->printInfo();
+    
     return 0;
 }
