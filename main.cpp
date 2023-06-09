@@ -59,7 +59,7 @@ int main() {
     manager.uploadAllPages();
 
     //manager.addRecord();
-    manager.printRecord(700);
-    
+    manager.printInfoDisk();
+
     return 0;
 }

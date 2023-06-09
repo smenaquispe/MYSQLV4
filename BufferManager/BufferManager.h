@@ -55,6 +55,8 @@ public:
     void deleteRecord(int numberRecord);
     void addRecord();
     void printRecord(int idRecord);
+    void printAll();
+    void printInfoDisk();
 };
 
 #include"getPage.h"
@@ -66,5 +68,7 @@ public:
 #include"addRecord.h"
 #include"deleteRecord.h"
 #include"printRecord.h"
+#include"printAll.h"
+#include"printInfoDisk.h"
 
 #endif
