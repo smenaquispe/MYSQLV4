@@ -36,8 +36,9 @@ int main() {
     manager.uploadPage(175,178);
 
     manager.getPage(1)->deleteRecord(2);
+    manager.getPage(1)->deleteRecord(5);
 
-    manager.printPage(1);
+    manager.getPage(1)->addRecord();
 
     return 0;
 }

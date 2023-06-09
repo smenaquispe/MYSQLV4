@@ -205,7 +205,6 @@ void Page::deleteRecord(int idRecord) {
         while (directory.getline(buffer, lenBuffer))
         {
             char * token = myStrtok(buffer, " ");
-            bool first = true;
 
             if(sectorSelected == atoi(token)) {
                 temp<<newLine.str();                           
