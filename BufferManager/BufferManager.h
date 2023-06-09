@@ -57,6 +57,9 @@ public:
     void printRecord(int idRecord);
     void printAll();
     void printInfoDisk();
+
+    void printSector(int sector);
+    void printInfoSector(int sector);
 };
 
 #include"getPage.h"
@@ -70,5 +73,7 @@ public:
 #include"printRecord.h"
 #include"printAll.h"
 #include"printInfoDisk.h"
+#include"printSector.h"
+#include"printInfoSector.h"
 
 #endif
