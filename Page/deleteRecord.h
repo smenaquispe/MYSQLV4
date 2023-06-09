@@ -126,6 +126,7 @@ void Page::deleteRecord(int idRecord) {
     freeSpace[sectorSelected]--;
 
     /*
+        2da parte
         procedermos a elimnar la linea de la metadata
     */
     metaSector.open("./Disk/data/meta/sectors/" + to_string(sectorSelected));
@@ -152,6 +153,80 @@ void Page::deleteRecord(int idRecord) {
 
     remove(("./Disk/data/meta/sectors/" + to_string(sectorSelected)).c_str());
     rename("./Disk/data/meta/sectors/temp", ("./Disk/data/meta/sectors/" + to_string(sectorSelected)).c_str());
+
+    /*
+        tercera parte, volver a setear el directorio ahora con un registro menos
+    */
+
+    ifstream directory("./Disk/data/meta/directory");
+    // buscar por numero de sector
+
+    int position = 0;
+
+    stringstream newLine;
+
+    if(directory.is_open()) {
+        while (directory.getline(buffer, lenBuffer))
+        {
+            char * token = myStrtok(buffer, " ");
+            bool first = true;
+            if(sectorSelected == atoi(token)) {
+                while (token != nullptr)
+                {
+                    if(!first) {
+                        if(idRecord != atoi(token)) {
+                            newLine<<token<<" ";
+                        }
+                    }
+
+                    if(first) {
+                        newLine<<token<<" ";
+                        first = false;
+                    }
+
+                    token = myStrtok(nullptr, " ");
+                }
+
+                newLine<<endl;
+                break;            
+            }
+        }
+
+        directory.close();
+    } else {
+        cout<<"Error open directory"<<endl;
+        return;
+    }
+    
+    directory.open("./Disk/data/meta/directory");
+    temp.open("./Disk/data/meta/temp");
+    
+    if(directory.is_open()) {
+        while (directory.getline(buffer, lenBuffer))
+        {
+            char * token = myStrtok(buffer, " ");
+            bool first = true;
+
+            if(sectorSelected == atoi(token)) {
+                temp<<newLine.str();                           
+            } else {
+                while (token != nullptr)
+                {
+                    temp<<token<<" ";
+                    token = myStrtok(nullptr, " ");
+                }
+                temp<<endl;
+            }
+        }
+        directory.close();
+        temp.close();
+    } else {
+        cout<<"Error open directory"<<endl;
+        return;
+    }
+        
+    remove("./Disk/data/meta/directory");
+    rename("./Disk/data/meta/temp", "./Disk/data/meta/directory");
 
     delete auxBuffer;
 
