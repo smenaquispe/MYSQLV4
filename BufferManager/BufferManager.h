@@ -22,12 +22,14 @@ public:
     ~BufferManager() {}
 
     void uploadPage(int l1, int l2);
-    void getPage(int numPage);
+    Page * getPage(int numPage);
+    void printPage(int numPage);
     void deletePage(int numPage);
 };
 
 #include"getPage.h"
 #include"uploadPage.h"
 #include"deletePage.h"
+#include"printPage.h"
 
 #endif

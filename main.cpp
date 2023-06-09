@@ -29,12 +29,9 @@ int main() {
 
     // alamcena un máximo de 6 paginas
     BufferManager manager(6);
-    manager.uploadPage(3,10);
-    manager.uploadPage(6,7);
+    manager.uploadPage(106,108);
 
-    manager.getPage(1);
-
-    manager.deletePage(1);
+    manager.getPage(0)->loadMeta();
 
     
     
