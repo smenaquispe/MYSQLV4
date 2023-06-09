@@ -58,8 +58,8 @@ int main() {
 
     manager.uploadAllPages();
 
-    manager.addRecord();
-
+    //manager.addRecord();
+    manager.printRecord(700);
     
     return 0;
 }

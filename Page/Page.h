@@ -54,6 +54,8 @@ public:
     void printInfoSector(int numberSector);
     void printSize();
     void printSizeSector(int numberSector);
+
+    void printRecord(int idRecord);
 };
 
 
@@ -67,5 +69,6 @@ public:
 #include"printSize.h"
 #include"printSizeSector.h"
 #include"printInfoSector.h"
+#include"printRecord.h"
 
 #endif

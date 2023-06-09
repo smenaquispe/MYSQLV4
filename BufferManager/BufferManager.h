@@ -54,6 +54,7 @@ public:
     int findRecord(int numberRecord);
     void deleteRecord(int numberRecord);
     void addRecord();
+    void printRecord(int idRecord);
 };
 
 #include"getPage.h"
@@ -64,5 +65,6 @@ public:
 #include"uploadAllPages.h"
 #include"addRecord.h"
 #include"deleteRecord.h"
+#include"printRecord.h"
 
 #endif
