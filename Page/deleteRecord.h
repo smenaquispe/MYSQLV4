@@ -18,7 +18,6 @@ void Page::deleteRecord(int idRecord) {
     ifstream metaSector("./Disk/data/meta/sectors/" + to_string(sectorSelected));
 
     sector.getline(buffer, lenBuffer);
-    cout<<buffer<<endl;
 
     /*
         el algoritmo será contar cuanto mide cada sector dinamicamente
@@ -28,6 +27,7 @@ void Page::deleteRecord(int idRecord) {
     
     int puntoInicio, puntoFinal;
     int id; // para extraer y comprobar el id
+    int posId = 0; // en que posicon se encuentra dentro del sector
 
     if(metaSector.is_open()) {
         
@@ -88,7 +88,6 @@ void Page::deleteRecord(int idRecord) {
                 token = myStrtok(nullptr, " ");
             }
 
-            
             // aqui extraigo el punto de inicio y el punto de final 
             // que alcanza el registro que quiero eliminar
             puntoFinal--;
@@ -97,13 +96,16 @@ void Page::deleteRecord(int idRecord) {
             
             if(id == idRecord) {
                 break;
-            }            
+            }
+
+            posId++;
         }
     } else {
         cout<<"Error open metasector"<<endl;
         return;
     }
 
+    metaSector.close();
     sector.close();
     // creamos el nuevo texto
     int nuevaLongitud = lenBuffer - (puntoFinal - puntoInicio + 1);
@@ -118,7 +120,39 @@ void Page::deleteRecord(int idRecord) {
 
     // abrimos el sector en modo escritura
     ofstream sectorWrite("./Disk/data/sectors/" + to_string(sectorSelected));
-    // escribios el sector
+    // reescribios el sector
     sectorWrite<<buffer;
+    // habrá un campo más en free space
+    freeSpace[sectorSelected]--;
+
+    /*
+        procedermos a elimnar la linea de la metadata
+    */
+    metaSector.open("./Disk/data/meta/sectors/" + to_string(sectorSelected));
+    
+    ofstream temp("./Disk/data/meta/sectors/temp");
+    
+    if(metaSector.is_open()) {
+        int row = 0;
+        while (metaSector.getline(auxBuffer, lenBuffer))
+        {
+            if(row != posId) {
+                temp<<auxBuffer;
+                temp<<endl;
+            }
+            row++;
+        }
+    } else {
+        cout<<"Error open meta file"<<endl;
+        return;
+    } 
+
+    metaSector.close();
+    temp.close();
+
+    remove(("./Disk/data/meta/sectors/" + to_string(sectorSelected)).c_str());
+    rename("./Disk/data/meta/sectors/temp", ("./Disk/data/meta/sectors/" + to_string(sectorSelected)).c_str());
+
+    delete auxBuffer;
 
 }   

@@ -37,8 +37,5 @@ int main() {
 
     manager.getPage(1)->deleteRecord(2);
 
-    d.loadFile();
-
-    manager.printPage(1);
     return 0;
 }
