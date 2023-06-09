@@ -40,5 +40,7 @@ int main() {
 
     manager.getPage(1)->addRecord();
 
+    manager.printPage(1);
+
     return 0;
 }

@@ -42,13 +42,14 @@ void Page::addRecord() {
 
     // abrimos el sector que queremos modificar
     ofstream sector("./Disk/data/sectors/" + to_string(sectorSelected), ios::app);
-    fstream metaSector("./Disk/data/meta/sectors" + to_string(sectorSelected));
     fstream directory("./Disk/data/meta/directory");
 
     /*
         1. leer el meta y sacar donde es que tengo un espacio en blanco
         2. el meta tiene que retornar, punto inicio 
     */
+
+    freeSpace[sectorSelected]++;
 
     // agrega al sector
     for(int i = 0; i < inputs.size(); i++){
@@ -103,4 +104,72 @@ void Page::addRecord() {
     /*
         tercera parte, modificar la metadata
     */
+
+    fstream metaSector("./Disk/data/meta/sectors/" + to_string(sectorSelected));
+    stringstream newLine;
+
+    if(metaSector.is_open()) {
+        int pos = 0;
+        
+        while (metaSector.getline(buffer, lenBuffer))
+        {
+           char * token = myStrtok(buffer, " ");
+            int a, b;
+            bool first = true;
+            int countColumn = 0;
+            while (token != nullptr)
+            {
+                if(strcmp(token, ",") && first) {
+                    a = atoi(token);
+                    first = false;
+                }
+
+                else if(strcmp(token, ",") && !first) {
+                    b = atoi(token);
+                    first = true;
+                }
+
+                // caso solo un numero
+                else if(!strcmp(token, ",") && !first) {
+                    b = a;
+                    first = true;
+
+                    
+                    newLine<<a<<" , ";
+                    countColumn++;
+                    pos += 1;
+                }
+
+                else if(!strcmp(token, ",") && first) {
+                    if((b - a) == 0){
+                        first = true;
+                        
+                        newLine<<a<<" "<<b<<" , ";
+
+                        //cout<<pos<<endl;
+                        pos += 1;
+                        countColumn++;
+                    } else {
+                        
+                        newLine<<b - inputs[countColumn].length()<<" "<<b<<" , ";
+                        //cout<<pos<<endl;
+                        pos += b - a;
+                        countColumn++;
+                    }
+                }
+
+                token = myStrtok(nullptr, " ");
+            }
+
+            break;             
+        }
+        
+        metaSector.close();
+    } else {
+        cout<<"Error open metasector"<<endl;
+        return;
+    }
+
+    ofstream metaSectorWrite("./Disk/data/meta/sectors/" + to_string(sectorSelected), ios::app);
+    metaSectorWrite<<newLine.str()<<endl;
 }
