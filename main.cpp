@@ -58,11 +58,8 @@ int main() {
 
     manager.uploadAllPages();
 
-    manager.getPage(0)->printInfo();
-    manager.getPage(0)->printInfoSector(0);
-    manager.getPage(0)->printSizeSector(0);
+    manager.addRecord();
 
-    manager.getPage(0)->printSize();
     
     return 0;
 }
