@@ -12,7 +12,6 @@ public:
     File * file;
     
     int numTotalSectores;
-    int numTotalClusters;
 
     int NUMBER_REGISTER_PER_SECTOR = 5;
     int lenBuffer;

@@ -29,8 +29,7 @@ int main() {
 
     // alamcena un máximo de 6 paginas
     // los sectores almacenan 5 registros
-    BufferManager manager(6, 5);
-    
+    BufferManager manager(6, &d);
     manager.uploadPage(106,108);
     manager.uploadPage(0, 5);
     manager.uploadPage(175,178);
