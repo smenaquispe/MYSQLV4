@@ -38,8 +38,12 @@ public:
     }
 
     void loadFile();
+    
+    // esta funcion se ejecuta para guardar toda la metadata que se necesita para volver a leer
+    void saveFile();
 };
 
 #include"loadFile.h"
+#include"saveFile.h"
 
 #endif

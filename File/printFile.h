@@ -17,6 +17,7 @@ void File::printFile(int min, int max) {
 
 void File::printFile(int numeroRegistro) {
     ifstream file("./docs/file");
+    ifstream schema("./Disk/data/meta/schema");
 
     numeroRegistro--;
 
@@ -24,10 +25,19 @@ void File::printFile(int numeroRegistro) {
         file.seekg((numeroRegistro * this->totalRegisterBytes) + 1);
         file.read(buffer, totalRegisterBytes);
 
+        if(schema.eof()) {
+            schema.clear();
+            schema.seekg(0);
+        }
+
+
         int prevSize = 0;
+        int columnLen;
+      
         for(int i = 0; i < numberColumns; i++) {
             
-            int columnLen = columnBytes[i];
+            schema >> columnLen;
+
             if(columnLen > 1) columnLen--; // si es uno, no se convertira en 0
             if(columnLen == 1) prevSize--; // si es uno, es necesario retroceder para que imprima como debe de ser
 

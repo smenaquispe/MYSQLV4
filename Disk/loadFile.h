@@ -6,6 +6,8 @@
 void Disk::loadFile() {
     // abrimos el file
     ifstream f("./docs/file");
+    
+    
 
     // cuantos bytes alamcena cada registro
     if(f.is_open()) {
@@ -32,10 +34,14 @@ void Disk::loadFile() {
 
             if(f.eof()) break;
 
+            ifstream schema("./Disk/data/meta/schema");
+
             // necesarios para alamacenar informacion de como limitan las columnas de tamaño variable
             int column = 0;
-            int acumulateColumn = file->columnBytes[0];
+            int acumulateColumn;
             bool band = false;
+
+            schema >> acumulateColumn;
 
             stringstream id; // guarda los ids de cada registro
 
@@ -52,7 +58,9 @@ void Disk::loadFile() {
                     }
 
                     metaSector<<i<<" , ";
-                    acumulateColumn += file->columnBytes[++column];
+                    int aux;
+                    schema >> aux;
+                    acumulateColumn += aux;
                     band = false;
                     
                     // podemos guardar el id
@@ -96,6 +104,8 @@ void Disk::loadFile() {
 
             posicionInicio += caracteresLeidos;  // Actualizar la posición de inicio para el siguiente segmento
 
+            schema.close();
+        
         }
         
         f.close();
