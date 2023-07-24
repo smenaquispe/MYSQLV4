@@ -21,8 +21,6 @@ void File::extractSchema() {
     }
     this->numberColumns -= 2;
 
-
-
     // fase de extraccion de pesos de columnas
     this->columnBytes = new int[numberColumns];
 
