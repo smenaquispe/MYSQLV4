@@ -20,10 +20,20 @@ using namespace std;
 int main() {
 
     // solo si se desea leer un csv
+    
+    /*
     File f("./titanic.csv");
     f.extractSchema("./docs/schema");
     f.toFile();
     f.printFile();
+    */
+
+    //Disk d(&f, 5, 7, 4, 5);
+    Disk d(5, 7, 4, 5);
+   
+    d.loadFile();
+
+    d.saveFile();
 
     return 0;
     

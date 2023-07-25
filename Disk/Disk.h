@@ -8,31 +8,57 @@
 class Disk
 {
 public:
-
-    File * file;
-    
+ 
     int numTotalSectores;
 
     int lenBuffer;
     char * buffer;
 
+    File * file;
     // sirvirá para metadata
     int NUMBER_REGISTER_PER_SECTOR = 5;
     int numPlatos;
     int numPistas;
     int numSectores;
 
+    // numero de bytes de los registro
+
+    // constructor que involucra un file
     Disk(File * f, int numPlatos, int numPistas, int numSectores, int sizeSector) {
+        
+        this->file = f;
+
+        this->numPlatos = numPlatos;
+        this->numPistas = numPistas;
+        this->numSectores = numSectores;
+        this->NUMBER_REGISTER_PER_SECTOR = sizeSector;
+        
+        buffer = new char[file->totalRegisterBytes]; // el buffer tendra el tamaño para almacenar un registro   
+        this->lenBuffer = file->totalRegisterBytes;
+    }
+
+    // constructor que no necesita de un file
+    // cuando la lectura del csv ya fue hecha
+    Disk(int numPlatos, int numPistas, int numSectores, int sizeSector) {
         
         this->numPlatos = numPlatos;
         this->numPistas = numPistas;
         this->numSectores = numSectores;
         this->NUMBER_REGISTER_PER_SECTOR = sizeSector;
 
-        this->file = f;
-        buffer = new char[file->totalRegisterBytes]; // el buffer tendra el tamaño para almacenar un registro   
-        this->lenBuffer = file->totalRegisterBytes;
+        
+        ifstream infoFile("./Disk/data/meta/info_file");    
+
+        int registerBytes;
+        infoFile >> registerBytes;
+        infoFile >> registerBytes;
+
+        buffer = new char[registerBytes];
+        this->lenBuffer = registerBytes;
+
     }
+
+
     ~Disk(){
         delete buffer;
     }
@@ -41,6 +67,9 @@ public:
     
     // esta funcion se ejecuta para guardar toda la metadata que se necesita para volver a leer
     void saveFile();
+
+    // funcion que extrae metadat sin necesidad de ejecutar nuevamente el file
+    void loadPrevDisk();
 };
 
 #include"loadFile.h"

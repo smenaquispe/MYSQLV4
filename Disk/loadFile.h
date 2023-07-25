@@ -7,8 +7,6 @@ void Disk::loadFile() {
     // abrimos el file
     ifstream f("./docs/file");
     
-    
-
     // cuantos bytes alamcena cada registro
     if(f.is_open()) {
 
@@ -30,7 +28,7 @@ void Disk::loadFile() {
         while (true)
         {
             f.seekg(posicionInicio, std::ios::beg);  // Establecer la posición de lectura
-            f.read(buffer, file->totalRegisterBytes);  // Leer el segmento en el buffer
+            f.read(buffer, lenBuffer);  // Leer el segmento en el buffer
 
             if(f.eof()) break;
 
@@ -45,7 +43,7 @@ void Disk::loadFile() {
 
             stringstream id; // guarda los ids de cada registro
 
-            for(int i = 0; i <= file->totalRegisterBytes; i++) {
+            for(int i = 0; i <= lenBuffer; i++) {
                 
                 if(buffer[i] != ' ' && !band){
                     metaSector<<i<<" ";
@@ -53,7 +51,7 @@ void Disk::loadFile() {
                 }
                 
                 if(i == acumulateColumn) {
-                    if(buffer[i] != ' ' && i != file->totalRegisterBytes) {
+                    if(buffer[i] != ' ' && i != lenBuffer) {
                         sector.write(&buffer[i], 1);
                     }
 
@@ -70,7 +68,7 @@ void Disk::loadFile() {
                 }
 
                 if(band){
-                    if(i != file->totalRegisterBytes) {
+                    if(i != lenBuffer) {
                         sector.write(&buffer[i], 1);
                         
                         // significa que esta guardando el id
@@ -98,7 +96,7 @@ void Disk::loadFile() {
 
             int caracteresLeidos = f.gcount();  // Obtener la cantidad de caracteres leídos
 
-            if (caracteresLeidos < file->totalRegisterBytes) {
+            if (caracteresLeidos < lenBuffer) {
                 break;  // Si se leen menos caracteres que el tamaño del segmento, es el final del archivo o de la línea
             }
 
