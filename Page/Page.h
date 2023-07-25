@@ -28,6 +28,9 @@ public:
     // sectores y los registros que guarda
     map<int, vector<int>> sectores;
 
+    // el cambio en cuanto a records
+    int cambio = 0;
+
     Page() {
     }
 

@@ -39,4 +39,5 @@ void Page::addRecord() {
     }
     
     sectores[numeroSector].push_back(idRecord);
+    cambio++;
 }

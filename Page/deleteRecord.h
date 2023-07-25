@@ -5,23 +5,22 @@ void Page::deleteRecord(int idRecord) {
 
     int numeroSector;
 
+    int i = 0;
     for(auto it = sectores.begin(); it != sectores.end(); ++it) {
         vector<int> temp = it->second;
         
-        int i = 0;
         for(i = 0; i < temp.size(); i++) {
             if(temp[i] == idRecord) { // se encontro el record en este sector
                 numeroSector = it->first;
                 break;          
             }
         }
-
-        // eliminar el numero de record en sectores
-        it->second.erase(it->second.begin() + i);
-
     }
+
+    sectores[numeroSector].erase(sectores[numeroSector].begin() + i);
 
     // eliminar todo el registro dentro de data
     data.erase(idRecord);
     freeSpace[numeroSector]--;
+    cambio--;
 }   

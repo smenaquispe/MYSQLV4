@@ -21,7 +21,7 @@ void Page::loadMeta() {
                     if(!isFirst) {
                         freeSpace[sector]++;
                         if(atoi(token))
-                            sectores[sector].push_back(atoi(token));
+                        sectores[sector].push_back(atoi(token));
                     }
 
                     else {
