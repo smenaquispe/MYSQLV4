@@ -62,7 +62,7 @@ public:
     void deleteRecord(int idRecord);
     bool hasSpace();
     void printInfo();
-    void printInfoSector(int numberSector);
+    int printInfoSector(int numberSector);
     void printSize();
     void printSizeSector(int numberSector);
 
