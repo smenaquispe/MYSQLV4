@@ -45,6 +45,9 @@ int main() {
     //manager.printPage(0);
 
     manager.getPage(0)->printSector(55);
+    cout<<endl;
+    manager.getPage(0)->deleteRecord(278);
+    manager.getPage(0)->printSector(55);
 
     //manager.printRecord(2);
 

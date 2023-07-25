@@ -1,238 +1,26 @@
 #include"Page.h"
 
 void Page::deleteRecord(int idRecord) {
+    // hallo en que sector se encuentra el record
 
+    int numeroSector;
 
-    int lenBuffer = 1024;
-
-    char buffer[lenBuffer];
-
-    int sectorSelected = this->findRecord(idRecord);
-    if(sectorSelected == -1) return;
-
-    // ahora si procedemos a eliminar el sector
-    /*
-        la tecnica de borrado es la siguiente:
-            se borra directamente todo lo que ocupa el record
-            y el espacio libre se mueve directamente al final del sector
-            luego hacer un rework de la metadata del sector
-            y restar en el free space
-    */
-
-    // 1ro modificar el archivo sector, retirando el la informacion del sector a eliminar
-    ifstream sector("./Disk/data/sectors/" + to_string(sectorSelected));
-    ifstream metaSector("./Disk/data/meta/sectors/" + to_string(sectorSelected));
-
-    sector.getline(buffer, lenBuffer);
-
-    /*
-        el algoritmo será contar cuanto mide cada sector dinamicamente
-    */
-
-    char * auxBuffer = new char[lenBuffer];
-    
-    int puntoInicio, puntoFinal;
-    int id; // para extraer y comprobar el id
-    int posId = 0; // en que posicon se encuentra dentro del sector
-
-    if(metaSector.is_open()) {
+    for(auto it = sectores.begin(); it != sectores.end(); ++it) {
+        vector<int> temp = it->second;
         
-        int pos = 0;
-        int countRecords = 1;
-
-        
-        while (metaSector.getline(auxBuffer, lenBuffer)) {
-            
-            bool isId = true; // cuando imprime por primera vez es el id
-            int countColumns = 0;
-            char * token = myStrtok(auxBuffer, " ");
-            int a, b;
-            bool first = true;
-
-            while (token != nullptr)
-            {
-                if(strcmp(token, ",") && first) {
-                    a = atoi(token);
-                    first = false;
-                }
-
-                else if(strcmp(token, ",") && !first) {
-                    b = atoi(token);
-                    first = true;
-                }
-
-                // caso solo un numero
-                else if(!strcmp(token, ",") && !first) {
-                    b = a;
-                    first = true;
-                    pos += 1;
-                
-                    if(countColumns == 0) puntoInicio = pos;
-                    puntoFinal = pos;
-
-                    countColumns++;
-                }
-
-                else if(!strcmp(token, ",") && first) {
-                    if((b - a) == 0){
-                        pos += 1;
-                    } else {
-                        if(isId) {
-                            string numberString(buffer + pos, b - a);
-                            id = stoi(numberString);
-                            isId = false;
-                        }
-                        pos += b - a;
-                    }
-
-                    if(countColumns == 0) puntoInicio = pos;
-                    puntoFinal = pos;
-
-                    countColumns++;
-                }
-
-                token = myStrtok(nullptr, " ");
-            }
-
-            // aqui extraigo el punto de inicio y el punto de final 
-            // que alcanza el registro que quiero eliminar
-            puntoFinal--;
-            puntoInicio--;
-            countRecords++;
-            
-            if(id == idRecord) {
-                break;
-            }
-
-            posId++;
-        }
-    } else {
-        cout<<"Error open metasector"<<endl;
-        return;
-    }
-
-    metaSector.close();
-    sector.close();
-    // creamos el nuevo texto
-    int nuevaLongitud = lenBuffer - (puntoFinal - puntoInicio + 1);
-    int desplazamiento = puntoFinal - puntoInicio + 1;
-
-    for (int i = puntoInicio; i <= nuevaLongitud; ++i) {
-        buffer[i] = buffer[i + desplazamiento];
-    }
-
-    // ahora el buffer tiene el registro eliminado
-    buffer[nuevaLongitud] = '\0';
-
-    // abrimos el sector en modo escritura
-    ofstream sectorWrite("./Disk/data/sectors/" + to_string(sectorSelected));
-    // reescribios el sector
-    sectorWrite<<buffer;
-    // habrá un campo más en free space
-    freeSpace[sectorSelected]--;
-
-    /*
-        2da parte
-        procedermos a elimnar la linea de la metadata
-    */
-    metaSector.open("./Disk/data/meta/sectors/" + to_string(sectorSelected));
-    
-    ofstream temp("./Disk/data/meta/sectors/temp");
-    
-    if(metaSector.is_open()) {
-        int row = 0;
-        while (metaSector.getline(auxBuffer, lenBuffer))
-        {
-            if(row != posId) {
-                temp<<auxBuffer;
-                temp<<endl;
-            }
-            row++;
-        }
-    } else {
-        cout<<"Error open meta file"<<endl;
-        return;
-    } 
-
-    metaSector.close();
-    temp.close();
-
-    remove(("./Disk/data/meta/sectors/" + to_string(sectorSelected)).c_str());
-    rename("./Disk/data/meta/sectors/temp", ("./Disk/data/meta/sectors/" + to_string(sectorSelected)).c_str());
-
-    /*
-        tercera parte, volver a setear el directorio ahora con un registro menos
-    */
-
-    ifstream directory("./Disk/data/meta/directory");
-    // buscar por numero de sector
-
-    int position = 0;
-
-    stringstream newLine;
-
-    if(directory.is_open()) {
-        while (directory.getline(buffer, lenBuffer))
-        {
-            char * token = myStrtok(buffer, " ");
-            bool first = true;
-            if(sectorSelected == atoi(token)) {
-                while (token != nullptr)
-                {
-                    if(!first) {
-                        if(idRecord != atoi(token)) {
-                            newLine<<token<<" ";
-                        }
-                    }
-
-                    if(first) {
-                        newLine<<token<<" ";
-                        first = false;
-                    }
-
-                    token = myStrtok(nullptr, " ");
-                }
-
-                newLine<<endl;
-                break;            
+        int i = 0;
+        for(i = 0; i < temp.size(); i++) {
+            if(temp[i] == idRecord) { // se encontro el record en este sector
+                numeroSector = it->first;
+                break;          
             }
         }
 
-        directory.close();
-    } else {
-        cout<<"Error open directory"<<endl;
-        return;
+        // eliminar el numero de record en sectores
+        it->second.erase(it->second.begin() + i);
+
     }
-    
-    directory.open("./Disk/data/meta/directory");
-    temp.open("./Disk/data/meta/temp");
-    
-    if(directory.is_open()) {
-        while (directory.getline(buffer, lenBuffer))
-        {
-            char * token = myStrtok(buffer, " ");
 
-            if(sectorSelected == atoi(token)) {
-                temp<<newLine.str();                           
-            } else {
-                while (token != nullptr)
-                {
-                    temp<<token<<" ";
-                    token = myStrtok(nullptr, " ");
-                }
-                temp<<endl;
-            }
-        }
-        directory.close();
-        temp.close();
-    } else {
-        cout<<"Error open directory"<<endl;
-        return;
-    }
-        
-    remove("./Disk/data/meta/directory");
-    rename("./Disk/data/meta/temp", "./Disk/data/meta/directory");
-
-    delete auxBuffer;
-
+    // eliminar todo el registro dentro de data
+    data.erase(idRecord);
 }   
