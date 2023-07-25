@@ -1,17 +1,32 @@
 #include"BufferManager.h"
 
-void BufferManager::deleteRecord(int numberRecord) {
-    int sector = findRecord(numberRecord);
-    if(sector == -1) return;
+void BufferManager::deleteRecord(int idRecord) {
+    
+    int j = 0;
+    for(bool b : seleccionables) {
+        if(b) {
+            if(pages[j].deleteRecord(idRecord)) {
+                cout<<"Fue eliminado en el bloque: "<<tagPages[j]<<endl;
+                pages[j].pinCount++;
+                pages[j].dirtyBit = 1;
+                return;
+            }
+        } 
+        j++;
+    }    
 
-    Page * currentPage;
-    for(int i = 0; i < countPages; i++) {
-        currentPage = getPage(i); 
-        if(sector >= currentPage->l1 && sector <= currentPage->l2) {
-            break;    
-        }
-    }
 
-    currentPage->deleteRecord(numberRecord);
-    currentPage->printSector(sector);
+    for(int i = 0; i <= disk->numTotalSectores / this->NUMBER_SECTORS_PER_CLUSTER ; i++) {
+
+        //cout<<i<<endl;        
+        int pos = uploadPage(i);
+        // digamos que el frame(pages) tiene paginas
+        
+        if(pages[pos].deleteRecord(idRecord)) {
+            cout<<"Fue eliminado en el bloque: "<<tagPages[pos]<<endl;
+            pages[pos].pinCount++;
+            pages[pos].dirtyBit = 1;
+            return;
+        }    
+    }   
 }

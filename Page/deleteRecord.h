@@ -1,9 +1,9 @@
 #include"Page.h"
 
-void Page::deleteRecord(int idRecord) {
+int Page::deleteRecord(int idRecord) {
     // hallo en que sector se encuentra el record
 
-    int numeroSector;
+    int numeroSector = -1;
 
     int i = 0;
     for(auto it = sectores.begin(); it != sectores.end(); ++it) {
@@ -16,6 +16,12 @@ void Page::deleteRecord(int idRecord) {
             }
         }
     }
+
+    if(numeroSector == -1) {
+        return 0;
+    }
+
+    cout<<"Fue eliminado en el sector: "<<numeroSector<<endl;
 
     //sectores[numeroSector].erase(sectores[numeroSector].begin() + i);
     vector<int> temp = sectores[numeroSector];
@@ -34,4 +40,6 @@ void Page::deleteRecord(int idRecord) {
     data.erase(idRecord);
     freeSpace[numeroSector]--;
     cambio--;
+
+    return 1;
 }   

@@ -1,8 +1,8 @@
 #include"Page.h"
 
-void Page::addRecord() {
+int Page::addRecord() {
 
-    int numeroSector;
+    int numeroSector = -1;
     for(auto it = freeSpace.begin(); it != freeSpace.end(); ++it) {
         // significa que tiene espacio y podemos agregar alli...
         if(it->second < maximumSector) {
@@ -10,6 +10,12 @@ void Page::addRecord() {
             break;
         }
     }
+
+    if(numeroSector == -1) {
+        return 0;
+    }
+
+    cout<<"Agregado en el sector: "<<numeroSector<<endl;
 
     regex stringRegex(R"(\((.*?)\))");
     ifstream input("./docs/input");
@@ -40,4 +46,6 @@ void Page::addRecord() {
     
     sectores[numeroSector].push_back(idRecord);
     cambio++;
+
+    return 1;
 }

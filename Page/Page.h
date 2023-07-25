@@ -58,8 +58,8 @@ public:
     int printSector(int numberSector);
     int findRecord(int idRecord);
     void loadMeta();
-    void addRecord();
-    void deleteRecord(int idRecord);
+    int addRecord();
+    int deleteRecord(int idRecord);
     bool hasSpace();
     void printInfo();
     int printInfoSector(int numberSector);
