@@ -15,6 +15,7 @@
 #include"Disk/Disk.h"
 #include"Page/Page.h"
 #include"BufferManager/BufferManager.h"
+
 using namespace std;
 
 int main() {
@@ -27,14 +28,18 @@ int main() {
     f.toFile();
     f.printFile();
     */
+    
 
     //Disk d(&f, 5, 7, 4, 5);
+    
     Disk d(5, 7, 4, 5);
-   
     d.loadFile();
 
-    d.saveFile();
 
+    BufferManager manager(&d, 4, 10);
+    manager.uploadPage(0);
+    
+    
     return 0;
     
 }

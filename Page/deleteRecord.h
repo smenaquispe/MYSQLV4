@@ -1,6 +1,12 @@
 #include"Page.h"
 
 void Page::deleteRecord(int idRecord) {
+
+
+    int lenBuffer = 1024;
+
+    char buffer[lenBuffer];
+
     int sectorSelected = this->findRecord(idRecord);
     if(sectorSelected == -1) return;
 

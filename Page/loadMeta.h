@@ -7,8 +7,9 @@ void Page::loadMeta() {
     // abrir el archivo de metadta del directorio de sectores
     ifstream directory("./Disk/data/meta/directory");
 
+    char buffer[1024];
     if(directory.is_open()) {
-        while (directory.getline(buffer, lenBuffer))
+        while (directory.getline(buffer, 1024))
         {
             char * token = myStrtok(buffer, " ");
 

@@ -4,6 +4,7 @@
 #include<fstream>
 #include<iostream>
 #include<map>
+#include<vector>
 #include<cstring>
 
 using namespace std;
@@ -11,9 +12,7 @@ using namespace std;
 class Page
 {
 public:
-    int l1, l2;
-    char * buffer;
-    int lenBuffer = 1024;
+    int l1, l2; // parte del sector l1 al l2
     map<int, int> freeSpace; // alamcena cuales son los sectores que tienen espacio libre
 
     int maximumSector; // lo que mide maximo el sector para tener un buffer
@@ -23,6 +22,10 @@ public:
     int numSuperficie; // si es que este bloque se encuentra en las 2 superficies
     int numPista;  // las pistas que ocupa
 
+    // será una estructura de datos
+    // un hash, que apunta a un vector
+    map<int, vector<string>> data; // esta es la informacion que la pagina levanta en memoria
+
     Page() {
     }
 
@@ -30,18 +33,16 @@ public:
         this->l1 = l1;
         this->l2 = l2;
         this->maximumSector = maximumSector;
-        buffer = new char[lenBuffer];
-
+    
         // seteamos la informacion de donde se ubica el bloque
         this->numPlato = n;
         this->numSuperficie = p;
         this->numPista = q;
 
         loadMeta();
+        loadData();
     }
-    ~Page() { 
-        delete [] buffer;
-    }
+    ~Page() {}
 
     void printSector();
     void printSector(int numberSector);
@@ -58,6 +59,10 @@ public:
     void printRecord(int idRecord);
 
     int getSize();
+
+    // load data, permitirá subir toda la informacion guardado en sectores a memoria (string)
+    void loadData();
+    void loadData(int numeroSector);
 };
 
 
@@ -73,5 +78,7 @@ public:
 #include"printInfoSector.h"
 #include"printRecord.h"
 #include"getSize.h"
+
+#include"loadData.h"
 
 #endif

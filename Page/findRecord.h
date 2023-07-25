@@ -1,6 +1,12 @@
 #include"Page.h"
 
 int Page::findRecord(int idRecord) {
+
+
+    int lenBuffer = 1024;
+
+    char buffer[lenBuffer];
+
      // abrir el archivo de metadta del directorio de sectores
     ifstream directory("./Disk/data/meta/directory");
 

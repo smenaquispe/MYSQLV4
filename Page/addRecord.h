@@ -1,6 +1,14 @@
 #include"Page.h"
 
 void Page::addRecord() {
+
+    
+    int lenBuffer = 1024;
+
+    char buffer[lenBuffer];
+    char auxBuffer[lenBuffer];
+
+
     // abrimos el archivo que contiene informacion del nuevo registro
     fstream input("./docs/input");
 

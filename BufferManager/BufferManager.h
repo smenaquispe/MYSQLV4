@@ -47,6 +47,8 @@ public:
     }
 
     void uploadPage(int l1, int l2, int n, int p, int q);
+    void uploadPage(int numeroBloque);
+
     void uploadAllPages();
     Page * getPage(int numPage);
     void printPage(int numPage);
