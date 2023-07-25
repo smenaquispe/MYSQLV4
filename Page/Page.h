@@ -76,6 +76,9 @@ public:
 
     // funcion que permitirá guardar los cambios en disco
     void saveSectors();
+
+    // imprimir informaciion de un solo record
+    int printInfoRecord(int idRecord);
 };
 
 
@@ -94,5 +97,6 @@ public:
 
 #include"loadData.h"
 #include"saveSectors.h"
+#include"printInfoRecord.h"
 
 #endif
