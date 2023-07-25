@@ -9,6 +9,17 @@ int BufferManager::uploadPage(int numeroBloque, int l1, int l2, int n, int p, in
         
         // si se encuentra vacio
         if(vidaPages[cualMeQuede] == 0) {
+            
+            // hay cambios por realizarse
+            if(pages[cualMeQuede].dirtyBit) {
+                char res;
+                cout<<"Desea guardar los cambios realizados en la pagina: "<<tagPages[cualMeQuede]<<" ? (s / n)"<<endl;
+                cin>>res;
+                if(res == 's') {
+                    pages[cualMeQuede].saveSectors();
+                }
+            }
+
             pages[cualMeQuede] = *page;
             vidaPages[cualMeQuede] = 2;
             tagPages[cualMeQuede] = numeroBloque;
