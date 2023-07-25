@@ -31,6 +31,11 @@ public:
     // el cambio en cuanto a records
     int cambio = 0;
 
+
+    // bits
+    bool dirtyBit = 0; // detecta si hubo un cambio
+    int pinCount = 0; // cuantas veces esta siendo usado la pagina
+
     Page() {
     }
 
@@ -50,7 +55,7 @@ public:
     ~Page() {}
 
     void printSector();
-    void printSector(int numberSector);
+    int printSector(int numberSector);
     int findRecord(int idRecord);
     void loadMeta();
     void addRecord();
@@ -61,7 +66,7 @@ public:
     void printSize();
     void printSizeSector(int numberSector);
 
-    void printRecord(int idRecord);
+    int printRecord(int idRecord);
 
     int getSize();
 

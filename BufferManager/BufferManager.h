@@ -23,6 +23,11 @@ public:
     int NUMBER_REGISTER_PER_SECTOR;
     int NUMBER_SECTORS_PER_CLUSTER;
 
+    vector<int> tagPages;
+    vector<int> vidaPages;
+    vector<bool> seleccionables;
+    int cualMeQuede = 0;
+
     BufferManager(Disk * d, int a, int cluserSize) {
 
         this->disk = d;
@@ -33,12 +38,17 @@ public:
         this->lenPages = a;
         pages = new Page[lenPages];
         
-        
         countPages = 0;
 
         buffer = new char[lenBuffer];
         
         this->NUMBER_REGISTER_PER_SECTOR = d->NUMBER_REGISTER_PER_SECTOR;
+
+        for(int i = 0; i < lenPages; i++) {
+            tagPages.push_back(0);
+            vidaPages.push_back(0);
+            seleccionables.push_back(false);
+        }
         
     }
 
@@ -46,8 +56,8 @@ public:
         delete [] buffer;
     }
 
-    void uploadPage(int l1, int l2, int n, int p, int q);
-    void uploadPage(int numeroBloque);
+    int uploadPage(int nbloque, int l1, int l2, int n, int p, int q);
+    int uploadPage(int numeroBloque);
 
     void uploadAllPages();
     Page * getPage(int numPage);

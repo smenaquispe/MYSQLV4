@@ -1,8 +1,15 @@
 #include"BufferManager.h"
 
 void BufferManager::printAll() {
-    for(int i = 1; i <= disk->file->numberRegisters; i++) {
+    
+    ifstream info_file("./Disk/data/meta/info_file");
+
+    int numeroRegistros;
+    info_file >> numeroRegistros;
+    info_file >> numeroRegistros;
+    info_file >> numeroRegistros;
+   
+    for(int i = 1; i <= numeroRegistros; i++) {
         printRecord(i);
-        cout<<endl;
     }
 }

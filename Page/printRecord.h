@@ -1,6 +1,14 @@
 #include"Page.h"
 
-void Page::printRecord(int idRecord) {
+int Page::printRecord(int idRecord) {
+
+    auto it = data.find(idRecord);
+    
+    // no se encontró
+    if(it == data.end()) {
+        return 0;
+    }
+
 
     vector<string> temp = data[idRecord];
 
@@ -10,4 +18,6 @@ void Page::printRecord(int idRecord) {
     }
     
     cout<<endl;
+
+    return 1;
 }

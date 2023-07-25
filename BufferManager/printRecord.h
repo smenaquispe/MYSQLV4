@@ -1,17 +1,30 @@
 #include"BufferManager.h"
 
 void BufferManager::printRecord(int idRecord) {
-    int sector = findRecord(idRecord);
-    if(sector == -1) return;
 
- 
-    Page * currentPage;
-    for(int i = 0; i < countPages; i++) {
-        currentPage = getPage(i); 
-        if(sector >= currentPage->l1 && sector <= currentPage->l2) {
-            break;    
-        }
-    }
-    
-    currentPage->printRecord(idRecord);
+    int j = 0;
+    for(bool b : seleccionables) {
+        if(b) {
+            if(pages[j].printRecord(idRecord)) {
+                pages[j].pinCount++;
+                return;
+            }
+        } 
+        j++;
+    }    
+
+
+    for(int i = 0; i <= disk->numTotalSectores / this->NUMBER_SECTORS_PER_CLUSTER ; i++) {
+
+        //cout<<i<<endl;        
+        int pos = uploadPage(i);
+        // digamos que el frame(pages) tiene paginas
+        
+        if(pages[pos].printRecord(idRecord)) {
+            pages[pos].pinCount++;
+            return;
+        }    
+    }   
+
+
 }

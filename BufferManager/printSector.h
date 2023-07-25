@@ -1,13 +1,29 @@
 #include"BufferManager.h"
 
 void BufferManager::printSector(int numberSector) {
-    Page * currentPage;
-    for(int i = 0; i < countPages; i++) {
-        currentPage = getPage(i); 
-        if(numberSector >= currentPage->l1 && numberSector <= currentPage->l2) {
-            break;    
-        }
-    }
-   
-    currentPage->printSector(numberSector);
+    
+    int j = 0;
+    for(bool b : seleccionables) {
+        if(b) {
+            if(pages[j].printSector(numberSector)) {
+                pages[j].pinCount++;
+                return;
+            }
+        } 
+        j++;
+    }    
+
+
+    for(int i = 0; i <= disk->numTotalSectores / this->NUMBER_SECTORS_PER_CLUSTER ; i++) {
+
+        //cout<<i<<endl;        
+        int pos = uploadPage(i);
+        // digamos que el frame(pages) tiene paginas
+        
+        if(pages[pos].printSector(numberSector)) {
+            pages[pos].pinCount++;
+            return;
+        }    
+    }   
+
 }
