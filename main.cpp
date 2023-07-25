@@ -39,12 +39,14 @@ int main() {
     BufferManager manager(&d, 4, 10);
 
     // este es el el bloque 7
-    manager.uploadPage(0);
+    manager.uploadPage(5);
 
     // como es el primero se guarda en la pos 0
-    manager.printPage(0);
+    //manager.printPage(0);
 
-    manager.printRecord(2);
+    manager.getPage(0)->printSector(55);
+
+    //manager.printRecord(2);
 
     return 0;
     

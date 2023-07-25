@@ -11,6 +11,14 @@ void Page::printSector() {
 }
 
 void Page::printSector(int numberSector) {
+    // el sector no se encuentra en la pagina
+    if(!(l1 <= numberSector && l2 >= numberSector)) {
+        return;
+    }
 
-
+    vector<int> temp = sectores[numberSector];
+    for(int idRecord : temp) {
+        printRecord(idRecord);
+    }
+    
 }

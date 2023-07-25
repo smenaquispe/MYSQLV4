@@ -25,6 +25,8 @@ public:
     // será una estructura de datos
     // un hash, que apunta a un vector
     map<int, vector<string>> data; // esta es la informacion que la pagina levanta en memoria
+    // sectores y los registros que guarda
+    map<int, vector<int>> sectores;
 
     Page() {
     }

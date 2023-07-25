@@ -15,16 +15,20 @@ void Page::loadMeta() {
 
             if(atoi(token) >= l1 && atoi(token) <= l2) {
                 bool isFirst = true;
-                int sector = atoi(token); 
+                int sector = atoi(token);
                 while (token != nullptr)
                 {
                     if(!isFirst) {
                         freeSpace[sector]++;
+                        if(atoi(token))
+                            sectores[sector].push_back(atoi(token));
                     }
 
                     else {
                         freeSpace[sector] = -1;
                         isFirst = false;
+
+                        sectores[sector] = {};
                     }
 
                     token = myStrtok(nullptr, " ");
