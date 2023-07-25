@@ -60,11 +60,12 @@ void Disk::loadFile() {
                     schema >> aux;
                     acumulateColumn += aux;
                     band = false;
-                    
+
+                    column++;
                     // podemos guardar el id
                     if(column == 1) {
                         directory<<id.str()<<" ";
-                    }
+                    }   
                 }
 
                 if(band){
@@ -76,7 +77,10 @@ void Disk::loadFile() {
                             id<<buffer[i]; 
                         }
                     }
-                }                              
+                                   
+                } 
+
+                
             }      
 
             metaSector<<endl;
