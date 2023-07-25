@@ -23,4 +23,5 @@ void Page::deleteRecord(int idRecord) {
 
     // eliminar todo el registro dentro de data
     data.erase(idRecord);
+    freeSpace[numeroSector]--;
 }   

@@ -42,12 +42,11 @@ int main() {
     manager.uploadPage(5);
 
     // como es el primero se guarda en la pos 0
-    //manager.printPage(0);
 
-    manager.getPage(0)->printSector(55);
-    cout<<endl;
     manager.getPage(0)->deleteRecord(278);
+    manager.getPage(0)->addRecord();
     manager.getPage(0)->printSector(55);
+    //manager.printPage(0);
 
     //manager.printRecord(2);
 
