@@ -33,8 +33,8 @@ int main() {
     //Disk d(&f, 5, 7, 4, 5);
     
     Disk d(5, 7, 4, 5);
-    d.loadFile();
-
+    //d.loadFile();
+    d.run();
 
     BufferManager manager(&d, 4, 10);
 

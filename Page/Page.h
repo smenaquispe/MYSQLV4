@@ -65,6 +65,9 @@ public:
     // load data, permitirá subir toda la informacion guardado en sectores a memoria (string)
     void loadData();
     void loadData(int numeroSector);
+
+    // funcion que permitirá guardar los cambios en disco
+    void saveSectors();
 };
 
 
@@ -82,5 +85,6 @@ public:
 #include"getSize.h"
 
 #include"loadData.h"
+#include"saveSectors.h"
 
 #endif

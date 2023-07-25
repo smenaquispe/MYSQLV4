@@ -68,11 +68,12 @@ public:
     // esta funcion se ejecuta para guardar toda la metadata que se necesita para volver a leer
     void saveFile();
 
-    // funcion que extrae metadat sin necesidad de ejecutar nuevamente el file
-    void loadPrevDisk();
+    // funcion que desliga totalmente del file
+    void run();
 };
 
 #include"loadFile.h"
 #include"saveFile.h"
+#include"run.h"
 
 #endif
