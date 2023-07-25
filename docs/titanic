@@ -1,0 +1,14 @@
+type titanic = record 
+PassengerId varchar(4)
+Survived bool(1)
+Pclass numeric(4)
+Name varchar(100)
+Sex varchar(10)
+Age numeric(5)
+SibSp numeric(4)
+Parch numeric(4)
+Ticket varchar(25)
+Fare numeric(15)
+Cabin varchar(20)
+Embarked char(1)
+end

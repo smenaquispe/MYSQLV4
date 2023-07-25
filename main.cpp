@@ -38,8 +38,10 @@ int main() {
         string name;
         cin>>name;
 
-        File f(name);
-        f.extractSchema("./docs/schema");
+        File f("./" + name);
+        cout<<"Nombre del schema: ";
+        cin>>name;
+        f.extractSchema("./docs/" + name);
         f.toFile();
 
         d = new Disk(&f, 5, 7, 4, 5);
@@ -113,7 +115,9 @@ int main() {
             manager.deleteRecord(number);
         } break;
         case 11: 
-            //d.saveFile();
+            // necesario guardar la metadata
+            if(res == 'n')
+                d->saveFile();
         break;
         default:
             cout<<"No es una opcion valida"<<endl;
