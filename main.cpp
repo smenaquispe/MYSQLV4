@@ -22,14 +22,12 @@ int main() {
 
     // solo si se desea leer un csv
     
-    /*
+/*
     File f("./titanic.csv");
     f.extractSchema("./docs/schema");
     f.toFile();
     f.printFile();
-    */
-    
-
+  */  
     //Disk d(&f, 5, 7, 4, 5);
     
     Disk d(5, 7, 4, 5);
@@ -43,9 +41,10 @@ int main() {
 
     // como es el primero se guarda en la pos 0
 
-    manager.getPage(0)->deleteRecord(278);
-    manager.getPage(0)->addRecord();
-    //manager.getPage(0)->printSector(55);
+    //manager.getPage(0)->deleteRecord(278);
+    //manager.getPage(0)->addRecord();
+    manager.getPage(0)->printSector(55);
+
 
     manager.getPage(0)->saveSectors();
     //manager.printPage(0);

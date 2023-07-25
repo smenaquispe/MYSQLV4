@@ -17,7 +17,18 @@ void Page::deleteRecord(int idRecord) {
         }
     }
 
-    sectores[numeroSector].erase(sectores[numeroSector].begin() + i);
+    //sectores[numeroSector].erase(sectores[numeroSector].begin() + i);
+    vector<int> temp = sectores[numeroSector];
+    vector<int> aux;
+
+    for(int t : temp) {
+        if(t != idRecord) {
+            aux.push_back(t);
+        }
+    }
+
+    sectores[numeroSector] = aux;
+
 
     // eliminar todo el registro dentro de data
     data.erase(idRecord);

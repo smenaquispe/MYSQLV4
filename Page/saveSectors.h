@@ -14,23 +14,20 @@ void Page::saveSectors() {
     for(auto it = sectores.begin(); it != sectores.end(); it++) {
         int numeroSector = it->first;
 
-        // abrimos el sector normal
-        ofstream sector("./Disk/data/sectors/" + numeroSector);
-        // abrimos la metadata del sector
-        ofstream meta_sector("./Disk/data/meta/sectors/" + numeroSector);
-
-
         // iteramos los records dentro del sector
         vector<int> records = it->second;
+        string for_sector; // para els sector
+        string meta; // string para la metadata
         for(int i = 0; i < records.size(); i++ ){
             
-            string meta; // string para la metadata
             // abrimos el schema
             ifstream schema("./Disk/data/meta/schema");
             int column;
             int acumulado = 0;
+            int prevAcumulado = 0;
             schema>>column;
 
+            prevAcumulado = acumulado;
             acumulado +=  column;
 
             // obteniendo el id del record
@@ -39,28 +36,38 @@ void Page::saveSectors() {
             // extraemos la infromacion de la data
             vector<string> data_sector = data[idRecord];
             
-            cout<<idRecord<<" ";
+            for_sector += to_string(idRecord);
 
             // comenzamos a sumar a la metadata
             meta += to_string(acumulado - to_string(idRecord).size()) + " " + to_string(acumulado) + " , ";
 
             for(string s : data_sector) {
-                cout<<s<<" ";
+                for_sector += s;
                 schema >> column;
+
+                prevAcumulado = acumulado;
                 acumulado += column;
             
-                meta += to_string(acumulado - s.size()) + " " + to_string(acumulado) + " , ";
+                if(prevAcumulado == acumulado - s.size()) {
+                    meta += to_string(acumulado) + " , ";
+                } else {
+                    meta += to_string(acumulado - s.size()) + " " + to_string(acumulado) + " , ";
+                }
             }
 
             schema.close();
-            cout<<endl;
             meta += "\n";
-            cout<<meta;
         }
 
-        cout<<endl;
+        // abrimos el sector normal
+        ofstream sector("./Disk/data/sectors/" + to_string(numeroSector));
+        sector<<for_sector;
+        // abrimos la metadata del sector
+        ofstream meta_sector("./Disk/data/meta/sectors/" + to_string(numeroSector));
+        meta_sector<<meta;
     }
 
+    return;
     
     
         // abrir el archivo de metadta del directorio de sectores
@@ -106,12 +113,14 @@ void Page::saveSectors() {
         return;
     }
 
+
+    ofstream out_directory("./Disk/data/meta/directory");
     for(auto it = sectores.begin(); it != sectores.end(); it++) {
-        cout<<it->first<<" ";
+        out_directory<<it->first<<" ";
         for(int p : it->second){
-            cout<<p<<" ";
+            out_directory<<p<<" ";
         }
-        cout<<endl;
+        out_directory<<endl;
     }
 
 
@@ -130,6 +139,9 @@ void Page::saveSectors() {
         total += "\n";
     }
 
-    cout<<total;
+    info_file.close();
+
+    ofstream out_info_file("./Disk/data/meta/info_file");
+    out_info_file<<total;
 
 }
