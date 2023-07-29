@@ -118,6 +118,8 @@ int main() {
             // necesario guardar la metadata
             if(res == 'n')
                 d->saveFile();
+            
+            manager.save();
         break;
         default:
             cout<<"No es una opcion valida"<<endl;

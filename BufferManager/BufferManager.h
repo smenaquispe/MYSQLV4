@@ -74,6 +74,8 @@ public:
     void printInfoSector(int sector);
 
     void printInfoRecord(int numberRecord);
+
+    void save();
 };
 
 #include"getPage.h"
@@ -90,5 +92,6 @@ public:
 #include"printSector.h"
 #include"printInfoSector.h"
 #include"printInfoRecord.h"
+#include"save.h"
 
 #endif
