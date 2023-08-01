@@ -17,4 +17,50 @@ void Disk::run() {
 
     this->numTotalSectores = numeroSectores;
 
+
+    ifstream directory("./Disk/data/meta/directory");
+    string line;
+
+    bool isFirst = true;
+
+    while (getline(directory, line))
+    {
+        char * sLine;
+        strcpy(sLine, line.c_str());
+
+        char * token = myStrtok(sLine, " ");
+
+        bool isSector = true;
+        int numSector;
+
+        while (token != nullptr)
+        {
+            int number = atoi(token);
+
+            if(number || isFirst) {
+
+                if(!isSector) {
+                    cout<<"Id: "<<number<<endl;
+                    cout<<numSector<<endl;
+                    tree->insert({number, numSector});
+                    cout<<"a"<<endl;
+                }
+        
+                else {
+                    numSector = number;
+                    cout<<"Sector: "<<numSector<<endl;
+                    isSector = false;
+                }
+
+                isFirst = false;
+            }
+
+
+            token = myStrtok(nullptr, " ");
+        }
+        
+    }
+    
+    tree->print();
+
 }

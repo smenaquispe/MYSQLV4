@@ -46,6 +46,8 @@ public:
     // cuando la lectura del csv ya fue hecha
     Disk(int numPlatos, int numPistas, int numSectores, int sizeSector) {
         
+        tree = new BTree(4);
+
         this->numPlatos = numPlatos;
         this->numPistas = numPistas;
         this->numSectores = numSectores;
