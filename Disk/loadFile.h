@@ -65,6 +65,7 @@ void Disk::loadFile() {
                     // podemos guardar el id
                     if(column == 1) {
                         directory<<id.str()<<" ";
+                        tree->insert({ stoi(id.str()), numTotalSectores});
                     }   
                 }
 

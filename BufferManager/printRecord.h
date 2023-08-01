@@ -13,18 +13,16 @@ void BufferManager::printRecord(int idRecord) {
         j++;
     }    
 
+    BTreeNode * n = disk->tree->search({idRecord, 0});
+    Index * index = n->getIndex({idRecord, 0});
 
-    for(int i = 0; i <= disk->numTotalSectores / this->NUMBER_SECTORS_PER_CLUSTER ; i++) {
-
-        //cout<<i<<endl;        
-        int pos = uploadPage(i);
+    int numBloque = index->sect / this->NUMBER_SECTORS_PER_CLUSTER;
+    
+    int pos = uploadPage(numBloque);
         // digamos que el frame(pages) tiene paginas
         
-        if(pages[pos].printRecord(idRecord)) {
-            pages[pos].pinCount++;
-            return;
-        }    
+    if(pages[pos].printRecord(idRecord)) {
+        pages[pos].pinCount++;
+        return;
     }   
-
-
 }

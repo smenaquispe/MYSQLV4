@@ -3,10 +3,15 @@
 #include<iomanip>
 using namespace std;
 
+struct Index {
+	int ind;
+	int sect;
+};
+
 // A BTree node
 class BTreeNode
 {
-	int *keys; // An array of keys
+	Index *keys; // An array of keys
 	int t;	 // Minimum degree (defines the range for number of keys)
 	BTreeNode **C; // An array of child pointers
 	int n;	 // Current number of keys
@@ -17,7 +22,7 @@ public:
 	// A utility function to insert a new key in the subtree rooted with
 	// this node. The assumption is, the node must be non-full when this
 	// function is called
-	void insertNonFull(int k);
+	void insertNonFull(Index k);
 
 	// A utility function to split the child y of this node. i is index of y in
 	// child array C[]. The Child y must be full when this function is called
@@ -27,7 +32,9 @@ public:
 	void traverse();
 
 	// A function to search a key in the subtree rooted with this node.
-	BTreeNode *search(int k); // returns NULL if k is not present.
+	BTreeNode *search(Index k); // returns NULL if k is not present.
+
+	Index * getIndex(Index k);
 
     void printNode(int level);
 
@@ -51,11 +58,11 @@ public:
 	{ if (root != NULL) root->traverse(); }
 
 	// function to search a key in this tree
-	BTreeNode* search(int k)
+	BTreeNode* search(Index k)
 	{ return (root == NULL)? NULL : root->search(k); }
 
 	// The main function that inserts a new key in this B-Tree
-	void insert(int k);
+	void insert(Index k);
 
     void print();
 };
@@ -69,7 +76,7 @@ BTreeNode::BTreeNode(int t1, bool leaf1)
 
 	// Allocate memory for maximum number of possible keys
 	// and child pointers
-	keys = new int[2*t-1];
+	keys = new Index[2*t-1];
 	C = new BTreeNode *[2*t];
 
 	// Initialize the number of keys as 0
@@ -80,7 +87,7 @@ void BTreeNode::printNode(int level)
 {
     cout << setw(level * 4) << "";
     for (int i = 0; i < n; i++)
-        cout << " " << keys[i];
+        cout << " " << keys[i].ind;
 
     cout << endl;
 
@@ -91,6 +98,16 @@ void BTreeNode::printNode(int level)
             C[i]->printNode(level + 1);
         }
     }
+}
+
+Index * BTreeNode::getIndex(Index k) {
+	for(int i = 0; i < n; i++) {
+		if(k.ind == keys[i].ind) {
+			return &keys[i];
+		}
+	}
+
+	return nullptr;
 }
 
 // Function to traverse all nodes in a subtree rooted with this node
@@ -105,7 +122,7 @@ void BTreeNode::traverse()
 		// traverse the subtree rooted with child C[i].
 		if (leaf == false)
 			C[i]->traverse();
-		cout << " " << keys[i];
+		cout << " " << keys[i].ind;
 	}
 
 	// Print the subtree rooted with last child
@@ -114,15 +131,15 @@ void BTreeNode::traverse()
 }
 
 // Function to search key k in subtree rooted with this node
-BTreeNode *BTreeNode::search(int k)
+BTreeNode *BTreeNode::search(Index k)
 {
 	// Find the first key greater than or equal to k
 	int i = 0;
-	while (i < n && k > keys[i])
+	while (i < n && k.ind > keys[i].ind)
 		i++;
 
 	// If the found key is equal to k, return this node
-	if (keys[i] == k)
+	if (keys[i].ind == k.ind)
 		return this;
 
 	// If key is not found here and this is a leaf node
@@ -144,7 +161,7 @@ void BTree::print()
 
 
 // The main function that inserts a new key in this B-Tree
-void BTree::insert(int k)
+void BTree::insert(Index k)
 {
 	// If tree is empty
 	if (root == NULL)
@@ -171,7 +188,7 @@ void BTree::insert(int k)
 			// New root has two children now. Decide which of the
 			// two children is going to have new key
 			int i = 0;
-			if (s->keys[0] < k)
+			if (s->keys[0].ind < k.ind)
 				i++;
 			s->C[i]->insertNonFull(k);
 
@@ -186,7 +203,7 @@ void BTree::insert(int k)
 // A utility function to insert a new key in this node
 // The assumption is, the node must be non-full when this
 // function is called
-void BTreeNode::insertNonFull(int k)
+void BTreeNode::insertNonFull(Index k)
 {
 	// Initialize index as index of rightmost element
 	int i = n-1;
@@ -197,7 +214,7 @@ void BTreeNode::insertNonFull(int k)
 		// The following loop does two things
 		// a) Finds the location of new key to be inserted
 		// b) Moves all greater keys to one place ahead
-		while (i >= 0 && keys[i] > k)
+		while (i >= 0 && keys[i].ind > k.ind)
 		{
 			keys[i+1] = keys[i];
 			i--;
@@ -210,7 +227,7 @@ void BTreeNode::insertNonFull(int k)
 	else // If this node is not leaf
 	{
 		// Find the child which is going to have the new key
-		while (i >= 0 && keys[i] > k)
+		while (i >= 0 && keys[i].ind > k.ind)
 			i--;
 
 		// See if the found child is full
@@ -222,7 +239,7 @@ void BTreeNode::insertNonFull(int k)
 			// After split, the middle key of C[i] goes up and
 			// C[i] is splitted into two. See which of the two
 			// is going to have the new key
-			if (keys[i+1] < k)
+			if (keys[i+1].ind < k.ind)
 				i++;
 		}
 		C[i+1]->insertNonFull(k);
