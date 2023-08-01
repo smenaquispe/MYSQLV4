@@ -40,15 +40,11 @@ void Disk::run() {
             if(number || isFirst) {
 
                 if(!isSector) {
-                    cout<<"Id: "<<number<<endl;
-                    cout<<numSector<<endl;
                     tree->insert({number, numSector});
-                    cout<<"a"<<endl;
                 }
         
                 else {
                     numSector = number;
-                    cout<<"Sector: "<<numSector<<endl;
                     isSector = false;
                 }
 
@@ -60,7 +56,5 @@ void Disk::run() {
         }
         
     }
-    
-    tree->print();
 
 }

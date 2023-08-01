@@ -65,7 +65,8 @@ int main() {
         cout<<"8. Informcacion de un bloque"<<endl;
         cout<<"9. Agregar registro"<<endl;
         cout<<"10. Remover registro"<<endl;
-        cout<<"11. Salir"<<endl;       
+        cout<<"11. Imprimir arbol"<<endl;
+        cout<<"12. Salir"<<endl;       
         cout<<"Digite su opcion: ";
         cin>>opc;
 
@@ -114,7 +115,10 @@ int main() {
             cin>>number;
             manager.deleteRecord(number);
         } break;
-        case 11: 
+        case 11: {
+            manager.disk->tree->print();
+        }
+        case 12: 
             // necesario guardar la metadata
             if(res == 'n')
                 d->saveFile();
@@ -126,7 +130,7 @@ int main() {
             break;
         }
 
-    } while (opc != 11);
+    } while (opc != 12);
 
 
 

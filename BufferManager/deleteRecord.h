@@ -15,18 +15,22 @@ void BufferManager::deleteRecord(int idRecord) {
         j++;
     }    
 
+    BTreeNode * n = disk->tree->search({idRecord, 0});
+    Index * index = n->getIndex({idRecord, 0});
 
-    for(int i = 0; i <= disk->numTotalSectores / this->NUMBER_SECTORS_PER_CLUSTER ; i++) {
-
-        //cout<<i<<endl;        
-        int pos = uploadPage(i);
+    int numBloque = index->sect / this->NUMBER_SECTORS_PER_CLUSTER;
+    
+    int pos = uploadPage(numBloque);
         // digamos que el frame(pages) tiene paginas
         
-        if(pages[pos].deleteRecord(idRecord)) {
-            cout<<"Fue eliminado en el bloque: "<<tagPages[pos]<<endl;
-            pages[pos].pinCount++;
-            pages[pos].dirtyBit = 1;
-            return;
-        }    
-    }   
+    if(pages[pos].deleteRecord(idRecord)) {
+        cout<<"Fue eliminado en el bloque: "<<tagPages[pos]<<endl;
+        pages[pos].pinCount++;
+        pages[pos].dirtyBit = 1;
+        
+        disk->tree->remove({idRecord, 0});
+
+        return;
+    }    
+        
 }

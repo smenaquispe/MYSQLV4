@@ -12,10 +12,14 @@ int BufferManager::uploadPage(int numeroBloque, int l1, int l2, int n, int p, in
             
             if(!pages[cualMeQuede].pinCount == 0) {
                 char res;
-                cout<<"Desea reemplazar la pagina "<<tagPages[cualMeQuede]<<"? (s / n) el pincount es de: "<<pages[cualMeQuede].pinCount<<endl;
+                cout<<"Desea reemplazar la pagina "<<tagPages[cualMeQuede]<<" del frame: "<< cualMeQuede <<"? (s / n) el pincount es de: "<<pages[cualMeQuede].pinCount<<endl;
                 cin>>res;
                 if(res == 'n') {
-                    break;
+                    cualMeQuede++;
+                    if(cualMeQuede == lenPages) {
+                        cualMeQuede = 0;
+                    }
+                    continue;
                 }
             }
 
