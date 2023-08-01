@@ -4,11 +4,14 @@
 #include<fstream>
 #include"direct.h"
 #include"../File/File.h"
+#include"../../btree-geeks.h"
 
 class Disk
 {
 public:
  
+    BTree * tree;
+
     int numTotalSectores;
 
     int lenBuffer;
@@ -26,6 +29,8 @@ public:
     // constructor que involucra un file
     Disk(File * f, int numPlatos, int numPistas, int numSectores, int sizeSector) {
         
+        tree = new BTree(4);
+
         this->file = f;
 
         this->numPlatos = numPlatos;
