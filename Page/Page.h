@@ -31,6 +31,8 @@ public:
     // el cambio en cuanto a records
     int cambio = 0;
 
+    // numero de bloque que representa la pagina
+    int numeroBloque;
 
     // bits
     bool dirtyBit = 0; // detecta si hubo un cambio
@@ -39,11 +41,13 @@ public:
     Page() {
     }
 
-    Page(int l1, int l2, int maximumSector, int n, int p, int q) {
+    Page(int numeroBloque, int l1, int l2, int maximumSector, int n, int p, int q) {
         this->l1 = l1;
         this->l2 = l2;
         this->maximumSector = maximumSector;
-    
+
+        this->numeroBloque = numeroBloque;
+
         // seteamos la informacion de donde se ubica el bloque
         this->numPlato = n;
         this->numSuperficie = p;

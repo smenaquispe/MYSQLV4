@@ -15,8 +15,7 @@ void BufferManager::deleteRecord(int idRecord) {
         j++;
     }    
 
-    BTreeNode * n = disk->tree->search({idRecord, 0});
-    Index * index = n->getIndex({idRecord, 0});
+    Index * index = disk->tree->search({idRecord, 0});
 
     int numBloque = index->sect / this->NUMBER_SECTORS_PER_CLUSTER;
     

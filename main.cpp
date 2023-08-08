@@ -31,7 +31,7 @@ int main() {
 
     Disk * d;
     if(res == 's') {
-        d = new Disk(5, 7, 4, 5);
+        d = new Disk(50, 70, 40, 20);
         d->run();
     } else if (res == 'n'){
         cout<<"Escriba el nombre del file: ";
@@ -44,11 +44,11 @@ int main() {
         f.extractSchema("./docs/" + name);
         f.toFile();
 
-        d = new Disk(&f, 5, 7, 4, 5);
+        d = new Disk(&f, 50, 70, 40, 20);
         d->loadFile();
     }
         
-    BufferManager manager(d, 4, 10);
+    BufferManager manager(d, 4, 100);
 
 
     int opc, number;    
@@ -116,7 +116,7 @@ int main() {
             manager.deleteRecord(number);
         } break;
         case 11: {
-            manager.disk->tree->print();
+            manager.disk->tree->display();
         }
         case 12: 
             // necesario guardar la metadata

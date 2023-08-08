@@ -17,18 +17,17 @@ void Disk::run() {
 
     this->numTotalSectores = numeroSectores;
 
-
     ifstream directory("./Disk/data/meta/directory");
-    string line;
+    char line[1024];
 
     bool isFirst = true;
 
-    while (getline(directory, line))
+    while (directory.getline(line, 1024))
     {
-        char * sLine;
-        strcpy(sLine, line.c_str());
-
-        char * token = myStrtok(sLine, " ");
+        //cout<<line<<endl;
+        
+        //cout<<sLine<<endl;
+        char * token = myStrtok(line, " ");
 
         bool isSector = true;
         int numSector;
@@ -36,11 +35,13 @@ void Disk::run() {
         while (token != nullptr)
         {
             int number = atoi(token);
+            //cout<<number<<endl;
 
             if(number || isFirst) {
 
                 if(!isSector) {
                     tree->insert({number, numSector});
+                    //cout<<number<<endl;
                 }
         
                 else {
@@ -50,7 +51,6 @@ void Disk::run() {
 
                 isFirst = false;
             }
-
 
             token = myStrtok(nullptr, " ");
         }

@@ -2,7 +2,8 @@
 
 
 int BufferManager::uploadPage(int numeroBloque, int l1, int l2, int n, int p, int q) {
-    Page * page = new Page(l1, l2, NUMBER_REGISTER_PER_SECTOR, n, p , q);
+
+    Page * page = new Page(numeroBloque, l1, l2, NUMBER_REGISTER_PER_SECTOR, n, p , q);
 
     // buscamos que en el frame haya espacio libre
     while(true) {

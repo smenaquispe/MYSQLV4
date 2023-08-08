@@ -3,10 +3,18 @@
 
 void BufferManager::printInfoRecord(int idRecord) {
     
+    
+    Index * index = disk->tree->search({idRecord, 0});
+
+    int numBloque = index->sect / this->NUMBER_SECTORS_PER_CLUSTER;
+
+
     int j = 0;
     for(bool b : seleccionables) {
         if(b) {
-            if(pages[j].printRecord(idRecord)) {
+            if(pages[j].numeroBloque == numBloque) {
+                cout<<"Se encuentra en el bloque: "<<numBloque<<endl;
+                pages[j].printInfoRecord(idRecord);
                 pages[j].pinCount++;
                 return;
             }
@@ -14,19 +22,14 @@ void BufferManager::printInfoRecord(int idRecord) {
         j++;
     }    
 
+    int pos = uploadPage(numBloque);
+    // digamos que el frame(pages) tiene paginas
 
-    for(int i = 0; i <= disk->numTotalSectores / this->NUMBER_SECTORS_PER_CLUSTER ; i++) {
-
-        //cout<<i<<endl;        
-        int pos = uploadPage(i);
-        // digamos que el frame(pages) tiene paginas
-
-        if(pages[pos].printInfoRecord(idRecord)) {    
-            cout<<"Se encuentra en el bloque: ";
-            cout<<tagPages[pos]<<endl;
-            pages[pos].pinCount++;
-            return;
-        }    
-    }   
+    cout<<"Se encuentra en el bloque: ";
+    if(pages[pos].printInfoRecord(idRecord)) {    
+        //cout<<tagPages[pos]<<endl;
+        pages[pos].pinCount++;
+        return;
+    }    
 
 }

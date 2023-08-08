@@ -10,7 +10,7 @@ class Disk
 {
 public:
  
-    BTree * tree;
+    BPTree * tree;
 
     int numTotalSectores;
 
@@ -29,7 +29,7 @@ public:
     // constructor que involucra un file
     Disk(File * f, int numPlatos, int numPistas, int numSectores, int sizeSector) {
         
-        tree = new BTree(5);
+        tree = new BPTree;
 
         this->file = f;
 
@@ -46,7 +46,7 @@ public:
     // cuando la lectura del csv ya fue hecha
     Disk(int numPlatos, int numPistas, int numSectores, int sizeSector) {
         
-        tree = new BTree(5);
+        tree = new BPTree;
 
         this->numPlatos = numPlatos;
         this->numPistas = numPistas;

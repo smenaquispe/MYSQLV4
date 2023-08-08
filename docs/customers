@@ -1,0 +1,14 @@
+type customer = record
+Index numeric(5)
+CustomerId varchar(20)
+FirstName varchar(50)
+LastName varchar(50)
+Company varchar(100)
+City varchar(50)
+Country varchar(100)
+PhoneA varchar(30)
+PhoneB varchar(30)
+Email varchar(100)
+SubscriptionDate varchar(11)
+Website varchar(100)
+end

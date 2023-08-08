@@ -52,6 +52,7 @@ class BPTree {
   void insert(Index);
   void remove(Index);
   void display(Node *);
+  void display();
   Node *getRoot();
 };
 Node::Node() {
@@ -485,6 +486,9 @@ void BPTree::display(Node *cursor) {
       }
     }
   }
+}
+void BPTree::display() {
+  display(root);
 }
 Node *BPTree::getRoot() {
   return root;

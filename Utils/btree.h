@@ -1,645 +1,516 @@
-// C++ program for B-Tree insertion
-#include<iostream>
-#include<iomanip>
+// Deletion operation on a B+ tree in C++
+
+#include <climits>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 using namespace std;
+int MAX = 10;
 
 struct Index {
-	int ind;
-	int sect;
+  int ind;
+  int sect;
 };
 
-// A BTree node
-class BTreeNode
-{
-	Index *keys; // An array of keys
-	int t;	 // Minimum degree (defines the range for number of keys)
-	BTreeNode **C; // An array of child pointers
-	int n;	 // Current number of keys
-	bool leaf; // Is true when node is leaf. Otherwise false
-public:
-	BTreeNode(int _t, bool _leaf); // Constructor
-
-	// A utility function to insert a new key in the subtree rooted with
-	// this node. The assumption is, the node must be non-full when this
-	// function is called
-	void insertNonFull(Index k);
-
-	// A utility function to split the child y of this node. i is index of y in
-	// child array C[]. The Child y must be full when this function is called
-	void splitChild(int i, BTreeNode *y);
-
-	// A function to traverse all nodes in a subtree rooted with this node
-	void traverse();
-
-	// A function to search a key in the subtree rooted with this node.
-	BTreeNode *search(Index k); // returns NULL if k is not present.
-
-	Index * getIndex(Index k);
-
-    void printNode(int level);
-
-
-    int findKey(Index k);
-
-    // A wrapper function to remove the key k in subtree rooted with
-    // this node.
-    void remove(Index k);
- 
-    // A function to remove the key present in idx-th position in
-    // this node which is a leaf
-    void removeFromLeaf(int idx);
- 
-    // A function to remove the key present in idx-th position in
-    // this node which is a non-leaf node
-    void removeFromNonLeaf(int idx);
- 
-    // A function to get the predecessor of the key- where the key
-    // is present in the idx-th position in the node
-    Index * getPred(int idx);
- 
-    // A function to get the successor of the key- where the key
-    // is present in the idx-th position in the node
-    Index * getSucc(int idx);
- 
-    // A function to fill up the child node present in the idx-th
-    // position in the C[] array if that child has less than t-1 keys
-    void fill(int idx);
- 
-    // A function to borrow a key from the C[idx-1]-th node and place
-    // it in C[idx]th node
-    void borrowFromPrev(int idx);
- 
-    // A function to borrow a key from the C[idx+1]-th node and place it
-    // in C[idx]th node
-    void borrowFromNext(int idx);
- 
-    // A function to merge idx-th child of the node with (idx+1)th child of
-    // the node
-    void merge(int idx);
-
-// Make BTree friend of this so that we can access private members of this
-// class in BTree functions
-friend class BTree;
-};
-
-// A BTree
-class BTree
-{
-	BTreeNode *root; // Pointer to root node
-	int t; // Minimum degree
-public:
-	// Constructor (Initializes tree as empty)
-	BTree(int _t)
-	{ root = NULL; t = _t; }
-
-	// function to traverse the tree
-	void traverse()
-	{ if (root != NULL) root->traverse(); }
-
-	// function to search a key in this tree
-	BTreeNode* search(Index k)
-	{ return (root == NULL)? NULL : root->search(k); }
-
-	// The main function that inserts a new key in this B-Tree
-	void insert(Index k);
-
-    void remove(Index k);
-
-    void print();
-};
-
-// Constructor for BTreeNode class
-BTreeNode::BTreeNode(int t1, bool leaf1)
-{
-	// Copy the given minimum degree and leaf property
-	t = t1;
-	leaf = leaf1;
-
-	// Allocate memory for maximum number of possible keys
-	// and child pointers
-	keys = new Index[2*t-1];
-	C = new BTreeNode *[2*t];
-
-	// Initialize the number of keys as 0
-	n = 0;
+bool operator<(const Index& a, const Index& b) {
+  return a.ind < b.ind;
 }
 
-void BTreeNode::printNode(int level)
-{
-    cout << setw(level * 4) << "";
-    for (int i = 0; i < n; i++)
-        cout << " " << keys[i].ind;
+bool operator>(const Index& a, const Index& b) {
+  return a.ind > b.ind;
+}
 
-    cout << endl;
+bool operator==(const Index& a, const Index& b) {
+  return a.ind == b.ind;
+}
 
-    if (!leaf)
-    {
-        for (int i = 0; i <= n; i++)
-        {
-            C[i]->printNode(level + 1);
+ostream& operator<<(ostream &o, const Index &x) {
+  o << x.ind;
+  return o;
+}
+
+class BPTree;
+class Node {
+  bool IS_LEAF;
+  Index *key;
+  int size;
+  Node **ptr;
+  friend class BPTree;
+
+   public:
+  Node();
+};
+class BPTree {
+  Node *root;
+  void insertInternal(Index, Node *, Node *);
+  void removeInternal(Index, Node *, Node *);
+  Node *findParent(Node *, Node *);
+
+   public:
+  BPTree();
+  Index * search(Index);
+  Index * search(Index, Node *);
+  void insert(Index);
+  void remove(Index);
+  void display(Node *);
+  void display();
+  Node *getRoot();
+};
+Node::Node() {
+  key = new Index[MAX];
+  ptr = new Node *[MAX + 1];
+}
+BPTree::BPTree() {
+  root = NULL;
+}
+Index * BPTree::search(Index x) {
+    return search(x, root);
+}
+Index * BPTree::search(Index x, Node * init) {
+  
+  Node * cursor = init;
+
+  int i = 0;
+  for(; i <= cursor->size; i++) {
+    
+    if(i == cursor->size) 
+     break;
+    
+    if(x == cursor->key[i])    {
+      return &cursor->key[i];
+    }  
+    
+    if(x < cursor->key[i])
+      break;
+  }
+
+  if(cursor->IS_LEAF) {
+    cout<<"No se encontro"<<endl;
+    return nullptr;
+  }
+
+  return search(x, cursor->ptr[i]);
+   
+}
+void BPTree::insert(Index x) {
+  if (root == NULL) {
+    root = new Node;
+    root->key[0] = x;
+    root->IS_LEAF = true;
+    root->size = 1;
+  } else {
+    Node *cursor = root;
+    Node *parent;
+    while (cursor->IS_LEAF == false) {
+      parent = cursor;
+      for (int i = 0; i < cursor->size; i++) {
+        if (x < cursor->key[i]) {
+          cursor = cursor->ptr[i];
+          break;
         }
-    }
-}
-
-Index * BTreeNode::getIndex(Index k) {
-	for(int i = 0; i < n; i++) {
-		if(k.ind == keys[i].ind) {
-			return &keys[i];
-		}
-	}
-
-	return nullptr;
-}
-
-// greater than or equal to k
-int BTreeNode::findKey(Index k)
-{
-    int idx=0;
-    while (idx<n && keys[idx].ind < k.ind)
-        ++idx;
-    return idx;
-}
- 
-
-// Function to traverse all nodes in a subtree rooted with this node
-void BTreeNode::traverse()
-{
-	// There are n keys and n+1 children, traverse through n keys
-	// and first n children
-	int i;
-	for (i = 0; i < n; i++)
-	{
-		// If this is not leaf, then before printing key[i],
-		// traverse the subtree rooted with child C[i].
-		if (leaf == false)
-			C[i]->traverse();
-		cout << " " << keys[i].ind;
-	}
-
-	// Print the subtree rooted with last child
-	if (leaf == false)
-		C[i]->traverse();
-}
-
-// Function to search key k in subtree rooted with this node
-BTreeNode *BTreeNode::search(Index k)
-{
-	// Find the first key greater than or equal to k
-	int i = 0;
-	while (i < n && k.ind > keys[i].ind)
-		i++;
-
-	// If the found key is equal to k, return this node
-	if (keys[i].ind == k.ind)
-		return this;
-
-	// If key is not found here and this is a leaf node
-	if (leaf == true)
-		return NULL;
-
-	// Go to the appropriate child
-	return C[i]->search(k);
-}
-
-void BTree::print()
-{
-    if (root != NULL)
-    {
-        cout << "BTree Structure:" << endl;
-        root->printNode(0);
-    }
-}
-
-
-// The main function that inserts a new key in this B-Tree
-void BTree::insert(Index k)
-{
-	// If tree is empty
-	if (root == NULL)
-	{
-		// Allocate memory for root
-		root = new BTreeNode(t, true);
-		root->keys[0] = k; // Insert key
-		root->n = 1; // Update number of keys in root
-	}
-	else // If tree is not empty
-	{
-		// If root is full, then tree grows in height
-		if (root->n == 2*t-1)
-		{
-			// Allocate memory for new root
-			BTreeNode *s = new BTreeNode(t, false);
-
-			// Make old root as child of new root
-			s->C[0] = root;
-
-			// Split the old root and move 1 key to the new root
-			s->splitChild(0, root);
-
-			// New root has two children now. Decide which of the
-			// two children is going to have new key
-			int i = 0;
-			if (s->keys[0].ind < k.ind)
-				i++;
-			s->C[i]->insertNonFull(k);
-
-			// Change root
-			root = s;
-		}
-		else // If root is not full, call insertNonFull for root
-			root->insertNonFull(k);
-	}
-}
-
-// A utility function to insert a new key in this node
-// The assumption is, the node must be non-full when this
-// function is called
-void BTreeNode::insertNonFull(Index k)
-{
-	// Initialize index as index of rightmost element
-	int i = n-1;
-
-	// If this is a leaf node
-	if (leaf == true)
-	{
-		// The following loop does two things
-		// a) Finds the location of new key to be inserted
-		// b) Moves all greater keys to one place ahead
-		while (i >= 0 && keys[i].ind > k.ind)
-		{
-			keys[i+1] = keys[i];
-			i--;
-		}
-
-		// Insert the new key at found location
-		keys[i+1] = k;
-		n = n+1;
-	}
-	else // If this node is not leaf
-	{
-		// Find the child which is going to have the new key
-		while (i >= 0 && keys[i].ind > k.ind)
-			i--;
-
-		// See if the found child is full
-		if (C[i+1]->n == 2*t-1)
-		{
-			// If the child is full, then split it
-			splitChild(i+1, C[i+1]);
-
-			// After split, the middle key of C[i] goes up and
-			// C[i] is splitted into two. See which of the two
-			// is going to have the new key
-			if (keys[i+1].ind < k.ind)
-				i++;
-		}
-		C[i+1]->insertNonFull(k);
-	}
-}
-
-// A utility function to split the child y of this node
-// Note that y must be full when this function is called
-void BTreeNode::splitChild(int i, BTreeNode *y)
-{
-	// Create a new node which is going to store (t-1) keys
-	// of y
-	BTreeNode *z = new BTreeNode(y->t, y->leaf);
-	z->n = t - 1;
-
-	// Copy the last (t-1) keys of y to z
-	for (int j = 0; j < t-1; j++)
-		z->keys[j] = y->keys[j+t];
-
-	// Copy the last t children of y to z
-	if (y->leaf == false)
-	{
-		for (int j = 0; j < t; j++)
-			z->C[j] = y->C[j+t];
-	}
-
-	// Reduce the number of keys in y
-	y->n = t - 1;
-
-	// Since this node is going to have a new child,
-	// create space of new child
-	for (int j = n; j >= i+1; j--)
-		C[j+1] = C[j];
-
-	// Link the new child to this node
-	C[i+1] = z;
-
-	// A key of y will move to this node. Find the location of
-	// new key and move all greater keys one space ahead
-	for (int j = n-1; j >= i; j--)
-		keys[j+1] = keys[j];
-
-	// Copy the middle key of y to this node
-	keys[i] = y->keys[t-1];
-
-	// Increment count of keys in this node
-	n = n + 1;
-}
-
-// A function to remove the key k from the sub-tree rooted with this node
-void BTreeNode::remove(Index k)
-{
-    int idx = findKey(k);
- 
-    // The key to be removed is present in this node
-    if (idx < n && keys[idx].ind == k.ind)
-    {
- 
-        // If the node is a leaf node - removeFromLeaf is called
-        // Otherwise, removeFromNonLeaf function is called
-        if (leaf)
-            removeFromLeaf(idx);
-        else
-            removeFromNonLeaf(idx);
-    }
-    else
-    {
- 
-        // If this node is a leaf node, then the key is not present in tree
-        if (leaf)
-        {
-            cout<<"The key "<<k.ind<<" is does not exist in the tree\n";
-            return;
+        if (i == cursor->size - 1) {
+          cursor = cursor->ptr[i + 1];
+          break;
         }
- 
-        // The key to be removed is present in the sub-tree rooted with this node
-        // The flag indicates whether the key is present in the sub-tree rooted
-        // with the last child of this node
-        bool flag = ( (idx==n)? true : false );
- 
-        // If the child where the key is supposed to exist has less that t keys,
-        // we fill that child
-        if (C[idx]->n < t)
-            fill(idx);
- 
-        // If the last child has been merged, it must have merged with the previous
-        // child and so we recurse on the (idx-1)th child. Else, we recurse on the
-        // (idx)th child which now has atleast t keys
-        if (flag && idx > n)
-            C[idx-1]->remove(k);
-        else
-            C[idx]->remove(k);
+      }
     }
-    return;
-}
-
- 
-// A function to remove the idx-th key from this node - which is a leaf node
-void BTreeNode::removeFromLeaf (int idx)
-{
- 
-    // Move all the keys after the idx-th pos one place backward
-    for (int i=idx+1; i<n; ++i)
-        keys[i-1] = keys[i];
- 
-    // Reduce the count of keys
-    n--;
- 
-    return;
-}
-
-
-// A function to remove the idx-th key from this node - which is a non-leaf node
-void BTreeNode::removeFromNonLeaf(int idx)
-{
- 
-    Index k = keys[idx];
- 
-    // If the child that precedes k (C[idx]) has atleast t keys,
-    // find the predecessor 'pred' of k in the subtree rooted at
-    // C[idx]. Replace k by pred. Recursively delete pred
-    // in C[idx]
-    if (C[idx]->n >= t)
-    {
-        Index * pred = getPred(idx);
-        keys[idx] = *pred;
-        C[idx]->remove(*pred);
+    if (cursor->size < MAX) {
+      int i = 0;
+      while (x > cursor->key[i] && i < cursor->size)
+        i++;
+      for (int j = cursor->size; j > i; j--) {
+        cursor->key[j] = cursor->key[j - 1];
+      }
+      cursor->key[i] = x;
+      cursor->size++;
+      cursor->ptr[cursor->size] = cursor->ptr[cursor->size - 1];
+      cursor->ptr[cursor->size - 1] = NULL;
+    } else {
+      Node *newLeaf = new Node;
+      Index virtualNode[MAX + 1];
+      for (int i = 0; i < MAX; i++) {
+        virtualNode[i] = cursor->key[i];
+      }
+      int i = 0, j;
+      while (x > virtualNode[i] && i < MAX)
+        i++;
+      for (int j = MAX + 1; j > i; j--) {
+        virtualNode[j] = virtualNode[j - 1];
+      }
+      virtualNode[i] = x;
+      newLeaf->IS_LEAF = true;
+      cursor->size = (MAX + 1) / 2;
+      newLeaf->size = MAX + 1 - (MAX + 1) / 2;
+      cursor->ptr[cursor->size] = newLeaf;
+      newLeaf->ptr[newLeaf->size] = cursor->ptr[MAX];
+      cursor->ptr[MAX] = NULL;
+      for (i = 0; i < cursor->size; i++) {
+        cursor->key[i] = virtualNode[i];
+      }
+      for (i = 0, j = cursor->size; i < newLeaf->size; i++, j++) {
+        newLeaf->key[i] = virtualNode[j];
+      }
+      if (cursor == root) {
+        Node *newRoot = new Node;
+        newRoot->key[0] = newLeaf->key[0];
+        newRoot->ptr[0] = cursor;
+        newRoot->ptr[1] = newLeaf;
+        newRoot->IS_LEAF = false;
+        newRoot->size = 1;
+        root = newRoot;
+      } else {
+        insertInternal(newLeaf->key[0], parent, newLeaf);
+      }
     }
- 
-    // If the child C[idx] has less that t keys, examine C[idx+1].
-    // If C[idx+1] has atleast t keys, find the successor 'succ' of k in
-    // the subtree rooted at C[idx+1]
-    // Replace k by succ
-    // Recursively delete succ in C[idx+1]
-    else if  (C[idx+1]->n >= t)
-    {
-        Index * succ = getSucc(idx);
-        keys[idx] = *succ;
-        C[idx+1]->remove(*succ);
+  }
+}
+void BPTree::insertInternal(Index x, Node *cursor, Node *child) {
+  if (cursor->size < MAX) {
+    int i = 0;
+    while (x > cursor->key[i] && i < cursor->size)
+      i++;
+    for (int j = cursor->size; j > i; j--) {
+      cursor->key[j] = cursor->key[j - 1];
     }
- 
-    // If both C[idx] and C[idx+1] has less that t keys,merge k and all of C[idx+1]
-    // into C[idx]
-    // Now C[idx] contains 2t-1 keys
-    // Free C[idx+1] and recursively delete k from C[idx]
-    else
-    {
-        merge(idx);
-        C[idx]->remove(k);
+    for (int j = cursor->size + 1; j > i + 1; j--) {
+      cursor->ptr[j] = cursor->ptr[j - 1];
     }
-    return;
-}
-
-
-// A function to get predecessor of keys[idx]
-Index * BTreeNode::getPred(int idx)
-{
-    // Keep moving to the right most node until we reach a leaf
-    BTreeNode *cur=C[idx];
-    while (!cur->leaf)
-        cur = cur->C[cur->n];
- 
-    // Return the last key of the leaf
-    return &cur->keys[cur->n-1];
-}
- 
-Index * BTreeNode::getSucc(int idx)
-{
- 
-    // Keep moving the left most node starting from C[idx+1] until we reach a leaf
-    BTreeNode *cur = C[idx+1];
-    while (!cur->leaf)
-        cur = cur->C[0];
- 
-    // Return the first key of the leaf
-    return &cur->keys[0];
-}
-
-// A function to fill child C[idx] which has less than t-1 keys
-void BTreeNode::fill(int idx)
-{
- 
-    // If the previous child(C[idx-1]) has more than t-1 keys, borrow a key
-    // from that child
-    if (idx!=0 && C[idx-1]->n>=t)
-        borrowFromPrev(idx);
- 
-    // If the next child(C[idx+1]) has more than t-1 keys, borrow a key
-    // from that child
-    else if (idx!=n && C[idx+1]->n>=t)
-        borrowFromNext(idx);
- 
-    // Merge C[idx] with its sibling
-    // If C[idx] is the last child, merge it with its previous sibling
-    // Otherwise merge it with its next sibling
-    else
-    {
-        if (idx != n)
-            merge(idx);
-        else
-            merge(idx-1);
+    cursor->key[i] = x;
+    cursor->size++;
+    cursor->ptr[i + 1] = child;
+  } else {
+    Node *newInternal = new Node;
+    Index virtualKey[MAX + 1];
+    Node *virtualPtr[MAX + 2];
+    for (int i = 0; i < MAX; i++) {
+      virtualKey[i] = cursor->key[i];
     }
-    return;
-}
-
- 
-// A function to borrow a key from C[idx-1] and insert it
-// into C[idx]
-void BTreeNode::borrowFromPrev(int idx)
-{
- 
-    BTreeNode *child=C[idx];
-    BTreeNode *sibling=C[idx-1];
- 
-    // The last key from C[idx-1] goes up to the parent and key[idx-1]
-    // from parent is inserted as the first key in C[idx]. Thus, the  loses
-    // sibling one key and child gains one key
- 
-    // Moving all key in C[idx] one step ahead
-    for (int i=child->n-1; i>=0; --i)
-        child->keys[i+1] = child->keys[i];
- 
-    // If C[idx] is not a leaf, move all its child pointers one step ahead
-    if (!child->leaf)
-    {
-        for(int i=child->n; i>=0; --i)
-            child->C[i+1] = child->C[i];
+    for (int i = 0; i < MAX + 1; i++) {
+      virtualPtr[i] = cursor->ptr[i];
     }
- 
-    // Setting child's first key equal to keys[idx-1] from the current node
-    child->keys[0] = keys[idx-1];
- 
-    // Moving sibling's last child as C[idx]'s first child
-    if(!child->leaf)
-        child->C[0] = sibling->C[sibling->n];
- 
-    // Moving the key from the sibling to the parent
-    // This reduces the number of keys in the sibling
-    keys[idx-1] = sibling->keys[sibling->n-1];
- 
-    child->n += 1;
-    sibling->n -= 1;
- 
-    return;
-}
- 
-// A function to borrow a key from the C[idx+1] and place
-// it in C[idx]
-void BTreeNode::borrowFromNext(int idx)
-{
- 
-    BTreeNode *child=C[idx];
-    BTreeNode *sibling=C[idx+1];
- 
-    // keys[idx] is inserted as the last key in C[idx]
-    child->keys[(child->n)] = keys[idx];
- 
-    // Sibling's first child is inserted as the last child
-    // into C[idx]
-    if (!(child->leaf))
-        child->C[(child->n)+1] = sibling->C[0];
- 
-    //The first key from sibling is inserted into keys[idx]
-    keys[idx] = sibling->keys[0];
- 
-    // Moving all keys in sibling one step behind
-    for (int i=1; i<sibling->n; ++i)
-        sibling->keys[i-1] = sibling->keys[i];
- 
-    // Moving the child pointers one step behind
-    if (!sibling->leaf)
-    {
-        for(int i=1; i<=sibling->n; ++i)
-            sibling->C[i-1] = sibling->C[i];
+    int i = 0, j;
+    while (x > virtualKey[i] && i < MAX)
+      i++;
+    for (int j = MAX + 1; j > i; j--) {
+      virtualKey[j] = virtualKey[j - 1];
     }
- 
-    // Increasing and decreasing the key count of C[idx] and C[idx+1]
-    // respectively
-    child->n += 1;
-    sibling->n -= 1;
- 
-    return;
-}
- 
-// A function to merge C[idx] with C[idx+1]
-// C[idx+1] is freed after merging
-void BTreeNode::merge(int idx)
-{
-    BTreeNode *child = C[idx];
-    BTreeNode *sibling = C[idx+1];
- 
-    // Pulling a key from the current node and inserting it into (t-1)th
-    // position of C[idx]
-    child->keys[t-1] = keys[idx];
- 
-    // Copying the keys from C[idx+1] to C[idx] at the end
-    for (int i=0; i<sibling->n; ++i)
-        child->keys[i+t] = sibling->keys[i];
- 
-    // Copying the child pointers from C[idx+1] to C[idx]
-    if (!child->leaf)
-    {
-        for(int i=0; i<=sibling->n; ++i)
-            child->C[i+t] = sibling->C[i];
+    virtualKey[i] = x;
+    for (int j = MAX + 2; j > i + 1; j--) {
+      virtualPtr[j] = virtualPtr[j - 1];
     }
- 
-    // Moving all keys after idx in the current node one step before -
-    // to fill the gap created by moving keys[idx] to C[idx]
-    for (int i=idx+1; i<n; ++i)
-        keys[i-1] = keys[i];
- 
-    // Moving the child pointers after (idx+1) in the current node one
-    // step before
-    for (int i=idx+2; i<=n; ++i)
-        C[i-1] = C[i];
- 
-    // Updating the key count of child and the current node
-    child->n += sibling->n+1;
-    n--;
- 
-    // Freeing the memory occupied by sibling
-    delete(sibling);
-    return;
+    virtualPtr[i + 1] = child;
+    newInternal->IS_LEAF = false;
+    cursor->size = (MAX + 1) / 2;
+    newInternal->size = MAX - (MAX + 1) / 2;
+    for (i = 0, j = cursor->size + 1; i < newInternal->size; i++, j++) {
+      newInternal->key[i] = virtualKey[j];
+    }
+    for (i = 0, j = cursor->size + 1; i < newInternal->size + 1; i++, j++) {
+      newInternal->ptr[i] = virtualPtr[j];
+    }
+    if (cursor == root) {
+      Node *newRoot = new Node;
+      newRoot->key[0] = cursor->key[cursor->size];
+      newRoot->ptr[0] = cursor;
+      newRoot->ptr[1] = newInternal;
+      newRoot->IS_LEAF = false;
+      newRoot->size = 1;
+      root = newRoot;
+    } else {
+      insertInternal(cursor->key[cursor->size], findParent(root, cursor), newInternal);
+    }
+  }
 }
-
- 
-void BTree::remove(Index k)
-{
-    if (!root)
-    {
-        cout << "The tree is empty\n";
+Node *BPTree::findParent(Node *cursor, Node *child) {
+  Node *parent;
+  if (cursor->IS_LEAF || (cursor->ptr[0])->IS_LEAF) {
+    return NULL;
+  }
+  for (int i = 0; i < cursor->size + 1; i++) {
+    if (cursor->ptr[i] == child) {
+      parent = cursor;
+      return parent;
+    } else {
+      parent = findParent(cursor->ptr[i], child);
+      if (parent != NULL)
+        return parent;
+    }
+  }
+  return parent;
+}
+void BPTree::remove(Index x) {
+  if (root == NULL) {
+    cout << "Tree empty\n";
+  } else {
+    Node *cursor = root;
+    Node *parent;
+    int leftSibling, rightSibling;
+    while (cursor->IS_LEAF == false) {
+      for (int i = 0; i < cursor->size; i++) {
+        parent = cursor;
+        leftSibling = i - 1;
+        rightSibling = i + 1;
+        if (x < cursor->key[i]) {
+          cursor = cursor->ptr[i];
+          break;
+        }
+        if (i == cursor->size - 1) {
+          leftSibling = i;
+          rightSibling = i + 2;
+          cursor = cursor->ptr[i + 1];
+          break;
+        }
+      }
+    }
+    bool found = false;
+    int pos;
+    for (pos = 0; pos < cursor->size; pos++) {
+      if (cursor->key[pos] == x) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      cout << "Not found\n";
+      return;
+    }
+    for (int i = pos; i < cursor->size; i++) {
+      cursor->key[i] = cursor->key[i + 1];
+    }
+    cursor->size--;
+    if (cursor == root) {
+      for (int i = 0; i < MAX + 1; i++) {
+        cursor->ptr[i] = NULL;
+      }
+      if (cursor->size == 0) {
+        cout << "Tree died\n";
+        delete[] cursor->key;
+        delete[] cursor->ptr;
+        delete cursor;
+        root = NULL;
+      }
+      return;
+    }
+    cursor->ptr[cursor->size] = cursor->ptr[cursor->size + 1];
+    cursor->ptr[cursor->size + 1] = NULL;
+    if (cursor->size >= (MAX + 1) / 2) {
+      return;
+    }
+    if (leftSibling >= 0) {
+      Node *leftNode = parent->ptr[leftSibling];
+      if (leftNode->size >= (MAX + 1) / 2 + 1) {
+        for (int i = cursor->size; i > 0; i--) {
+          cursor->key[i] = cursor->key[i - 1];
+        }
+        cursor->size++;
+        cursor->ptr[cursor->size] = cursor->ptr[cursor->size - 1];
+        cursor->ptr[cursor->size - 1] = NULL;
+        cursor->key[0] = leftNode->key[leftNode->size - 1];
+        leftNode->size--;
+        leftNode->ptr[leftNode->size] = cursor;
+        leftNode->ptr[leftNode->size + 1] = NULL;
+        parent->key[leftSibling] = cursor->key[0];
         return;
+      }
     }
- 
-    // Call the remove function for root
-    root->remove(k);
- 
-    // If the root node has 0 keys, make its first child as the new root
-    //  if it has a child, otherwise set root as NULL
-    if (root->n==0)
-    {
-        BTreeNode *tmp = root;
-        if (root->leaf)
-            root = NULL;
-        else
-            root = root->C[0];
- 
-        // Free the old root
-        delete tmp;
+    if (rightSibling <= parent->size) {
+      Node *rightNode = parent->ptr[rightSibling];
+      if (rightNode->size >= (MAX + 1) / 2 + 1) {
+        cursor->size++;
+        cursor->ptr[cursor->size] = cursor->ptr[cursor->size - 1];
+        cursor->ptr[cursor->size - 1] = NULL;
+        cursor->key[cursor->size - 1] = rightNode->key[0];
+        rightNode->size--;
+        rightNode->ptr[rightNode->size] = rightNode->ptr[rightNode->size + 1];
+        rightNode->ptr[rightNode->size + 1] = NULL;
+        for (int i = 0; i < rightNode->size; i++) {
+          rightNode->key[i] = rightNode->key[i + 1];
+        }
+        parent->key[rightSibling - 1] = rightNode->key[0];
+        return;
+      }
     }
-    return;
+    if (leftSibling >= 0) {
+      Node *leftNode = parent->ptr[leftSibling];
+      for (int i = leftNode->size, j = 0; j < cursor->size; i++, j++) {
+        leftNode->key[i] = cursor->key[j];
+      }
+      leftNode->ptr[leftNode->size] = NULL;
+      leftNode->size += cursor->size;
+      leftNode->ptr[leftNode->size] = cursor->ptr[cursor->size];
+      removeInternal(parent->key[leftSibling], parent, cursor);
+      delete[] cursor->key;
+      delete[] cursor->ptr;
+      delete cursor;
+    } else if (rightSibling <= parent->size) {
+      Node *rightNode = parent->ptr[rightSibling];
+      for (int i = cursor->size, j = 0; j < rightNode->size; i++, j++) {
+        cursor->key[i] = rightNode->key[j];
+      }
+      cursor->ptr[cursor->size] = NULL;
+      cursor->size += rightNode->size;
+      cursor->ptr[cursor->size] = rightNode->ptr[rightNode->size];
+      cout << "Merging two leaf nodes\n";
+      removeInternal(parent->key[rightSibling - 1], parent, rightNode);
+      delete[] rightNode->key;
+      delete[] rightNode->ptr;
+      delete rightNode;
+    }
+  }
 }
+void BPTree::removeInternal(Index x, Node *cursor, Node *child) {
+  if (cursor == root) {
+    if (cursor->size == 1) {
+      if (cursor->ptr[1] == child) {
+        delete[] child->key;
+        delete[] child->ptr;
+        delete child;
+        root = cursor->ptr[0];
+        delete[] cursor->key;
+        delete[] cursor->ptr;
+        delete cursor;
+        cout << "Changed root node\n";
+        return;
+      } else if (cursor->ptr[0] == child) {
+        delete[] child->key;
+        delete[] child->ptr;
+        delete child;
+        root = cursor->ptr[1];
+        delete[] cursor->key;
+        delete[] cursor->ptr;
+        delete cursor;
+        cout << "Changed root node\n";
+        return;
+      }
+    }
+  }
+  int pos;
+  for (pos = 0; pos < cursor->size; pos++) {
+    if (cursor->key[pos] == x) {
+      break;
+    }
+  }
+  for (int i = pos; i < cursor->size; i++) {
+    cursor->key[i] = cursor->key[i + 1];
+  }
+  for (pos = 0; pos < cursor->size + 1; pos++) {
+    if (cursor->ptr[pos] == child) {
+      break;
+    }
+  }
+  for (int i = pos; i < cursor->size + 1; i++) {
+    cursor->ptr[i] = cursor->ptr[i + 1];
+  }
+  cursor->size--;
+  if (cursor->size >= (MAX + 1) / 2 - 1) {
+    return;
+  }
+  if (cursor == root)
+    return;
+  Node *parent = findParent(root, cursor);
+  int leftSibling, rightSibling;
+  for (pos = 0; pos < parent->size + 1; pos++) {
+    if (parent->ptr[pos] == cursor) {
+      leftSibling = pos - 1;
+      rightSibling = pos + 1;
+      break;
+    }
+  }
+  if (leftSibling >= 0) {
+    Node *leftNode = parent->ptr[leftSibling];
+    if (leftNode->size >= (MAX + 1) / 2) {
+      for (int i = cursor->size; i > 0; i--) {
+        cursor->key[i] = cursor->key[i - 1];
+      }
+      cursor->key[0] = parent->key[leftSibling];
+      parent->key[leftSibling] = leftNode->key[leftNode->size - 1];
+      for (int i = cursor->size + 1; i > 0; i--) {
+        cursor->ptr[i] = cursor->ptr[i - 1];
+      }
+      cursor->ptr[0] = leftNode->ptr[leftNode->size];
+      cursor->size++;
+      leftNode->size--;
+      return;
+    }
+  }
+  if (rightSibling <= parent->size) {
+    Node *rightNode = parent->ptr[rightSibling];
+    if (rightNode->size >= (MAX + 1) / 2) {
+      cursor->key[cursor->size] = parent->key[pos];
+      parent->key[pos] = rightNode->key[0];
+      for (int i = 0; i < rightNode->size - 1; i++) {
+        rightNode->key[i] = rightNode->key[i + 1];
+      }
+      cursor->ptr[cursor->size + 1] = rightNode->ptr[0];
+      for (int i = 0; i < rightNode->size; ++i) {
+        rightNode->ptr[i] = rightNode->ptr[i + 1];
+      }
+      cursor->size++;
+      rightNode->size--;
+      return;
+    }
+  }
+  if (leftSibling >= 0) {
+    Node *leftNode = parent->ptr[leftSibling];
+    leftNode->key[leftNode->size] = parent->key[leftSibling];
+    for (int i = leftNode->size + 1, j = 0; j < cursor->size; j++) {
+      leftNode->key[i] = cursor->key[j];
+    }
+    for (int i = leftNode->size + 1, j = 0; j < cursor->size + 1; j++) {
+      leftNode->ptr[i] = cursor->ptr[j];
+      cursor->ptr[j] = NULL;
+    }
+    leftNode->size += cursor->size + 1;
+    cursor->size = 0;
+    removeInternal(parent->key[leftSibling], parent, cursor);
+  } else if (rightSibling <= parent->size) {
+    Node *rightNode = parent->ptr[rightSibling];
+    cursor->key[cursor->size] = parent->key[rightSibling - 1];
+    for (int i = cursor->size + 1, j = 0; j < rightNode->size; j++) {
+      cursor->key[i] = rightNode->key[j];
+    }
+    for (int i = cursor->size + 1, j = 0; j < rightNode->size + 1; j++) {
+      cursor->ptr[i] = rightNode->ptr[j];
+      rightNode->ptr[j] = NULL;
+    }
+    cursor->size += rightNode->size + 1;
+    rightNode->size = 0;
+    removeInternal(parent->key[rightSibling - 1], parent, rightNode);
+  }
+}
+void BPTree::display(Node *cursor) {
+  if (cursor != NULL) {
+    for (int i = 0; i < cursor->size; i++) {
+      cout << cursor->key[i] << " ";
+    }
+    cout << "\n";
+    if (cursor->IS_LEAF != true) {
+      for (int i = 0; i < cursor->size + 1; i++) {
+        display(cursor->ptr[i]);
+      }
+    }
+  }
+}
+void BPTree::display() {
+    display(root);
+}
+Node *BPTree::getRoot() {
+  return root;
+}
+
+// int main() {
+//   BPTree node;
+
+//   for(int i = 1; i <= 891; i++) {
+//     node.insert({i,0});
+//   }
+
+//   node.display();
+//   Index * index = node.search({60,0});
+
+//   if(index) {
+//     cout<< *index <<endl;
+//   }
+
+//   //node.display(node.getRoot());
+// }

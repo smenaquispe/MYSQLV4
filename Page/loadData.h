@@ -10,13 +10,13 @@ void Page::loadData(int numeroSector) {
     ifstream sector("./Disk/data/sectors/" + to_string(numeroSector));
     ifstream metaSector("./Disk/data/meta/sectors/" + to_string(numeroSector));
 
-    int lenBuffer = 1024;
+    int lenBuffer = 4048;
 
     char buffer[lenBuffer];
     char auxBuffer[lenBuffer];
 
-    sector.getline(auxBuffer, 1024);
-    sector.read(auxBuffer, 1024);
+    sector.getline(auxBuffer, 4048);
+    sector.read(auxBuffer, 4048);
 
     bool isId = true;
 
