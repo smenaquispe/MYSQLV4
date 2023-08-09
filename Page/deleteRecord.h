@@ -2,7 +2,6 @@
 
 int Page::deleteRecord(int idRecord) {
     // hallo en que sector se encuentra el record
-
     int numeroSector = -1;
 
     int i = 0;
@@ -33,8 +32,15 @@ int Page::deleteRecord(int idRecord) {
         }
     }
 
-    sectores[numeroSector] = aux;
+    for(auto inf : infoSectores) {
+        if(inf.numeroSector == numeroSector) {
+            cout<<"Numero de plato: "<<inf.numeroPlato<<endl;
+            cout<<"Numero de superficie: "<<inf.numeroSuperficie<<endl;
+            cout<<"Numero de pista: "<<inf.numeroPista<<endl;
+        }
+    }
 
+    sectores[numeroSector] = aux;
 
     // eliminar todo el registro dentro de data
     data.erase(idRecord);

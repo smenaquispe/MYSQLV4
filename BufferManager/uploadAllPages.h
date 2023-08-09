@@ -24,7 +24,7 @@ void BufferManager::uploadAllPages() {
         contSectores++;
 
         if(contBloques > NUMBER_SECTORS_PER_CLUSTER) {
-            this->uploadPage(4, a, b, contPlatos, contSuperficies, contPistas);
+            //this->uploadPage(4, a, b, contPlatos, contSuperficies, contPistas);
             count = 0;
             contBloques = 1;
         }

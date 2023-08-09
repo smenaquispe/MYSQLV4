@@ -1,18 +1,18 @@
 #include"Page.h"
 
-int Page::addRecord() {
+vector<int> Page::addRecord() {
 
     int numeroSector = -1;
-    for(auto it = freeSpace.begin(); it != freeSpace.end(); ++it) {
-        // significa que tiene espacio y podemos agregar alli...
+    for(auto it = freeSpace.rbegin(); it != freeSpace.rend(); ++it) {
+        // significa que tiene espacio y podemos agregar alli...        
         if(it->second < maximumSector) {
-            numeroSector = it->first;
+             numeroSector = it->first;
             break;
         }
     }
 
     if(numeroSector == -1) {
-        return 0;
+        return { -1, -1 };
     }
 
     cout<<"Agregado en el sector: "<<numeroSector<<endl;
@@ -32,9 +32,7 @@ int Page::addRecord() {
         while (regex_search(searchStart, line.cend(), matches, stringRegex)) {
             if(isId) {
                 idRecord = stoi(matches[1].str());
-                
                 data[idRecord] = {};
-
                 isId = false;
             } else {
                 t = matches[1].str();
@@ -43,9 +41,20 @@ int Page::addRecord() {
             searchStart = matches.suffix().first;
         }
     }
-    
+
     sectores[numeroSector].push_back(idRecord);
     cambio++;
 
-    return 1;
+    cout<<"Numero de sector: "<<numeroSector<<endl;
+    cout<<"id record: "<<idRecord<<endl;
+
+    for(auto inf : infoSectores) {
+        if(inf.numeroSector == numeroSector) {
+            cout<<"Numero de plato: "<<inf.numeroPlato<<endl;
+            cout<<"Numero de superficie: "<<inf.numeroSuperficie<<endl;
+            cout<<"Numero de pista: "<<inf.numeroPista<<endl;
+        }
+    }
+
+    return { numeroSector , idRecord } ;
 }

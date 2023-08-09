@@ -12,6 +12,7 @@ void Page::printSector() {
 
 int Page::printSector(int numberSector) {
     // el sector no se encuentra en la pagina
+    
     if(!(l1 <= numberSector && l2 >= numberSector)) {
         return 0;
     }

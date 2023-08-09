@@ -9,6 +9,7 @@ void BufferManager::printAll() {
     info_file >> numeroRegistros;
     info_file >> numeroRegistros;
    
+    cout<<numeroRegistros<<endl;
     for(int i = 1; i <= numeroRegistros; i++) {
         printRecord(i);
     }

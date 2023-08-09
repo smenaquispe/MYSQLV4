@@ -1,6 +1,6 @@
 #include"Page.h"
 
-void Page::saveSectors() {
+void Page::saveSectors(Disk * disk) {
     /*
         para guardar los cambios de los sectores en disco es necesario realizar los siguientes cambios en disco
 
@@ -67,7 +67,7 @@ void Page::saveSectors() {
         meta_sector<<meta;
     }
 
-    return;
+    //return;
     
     
         // abrir el archivo de metadta del directorio de sectores
@@ -88,6 +88,7 @@ void Page::saveSectors() {
                     if(!(l1 <= sector && sector <= l2)) {
                         if(atoi(token))
                             sectores[sector].push_back(atoi(token));
+                            disk->tree->insert({atoi(token), sector});
                     }
                 }
 

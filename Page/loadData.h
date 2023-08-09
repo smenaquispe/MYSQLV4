@@ -86,7 +86,7 @@ void Page::loadData(int numeroSector) {
 
             isId = true;
         }
-        
+
     } else {
         cout<<"Problems open meta sector file"<<endl;
         return;

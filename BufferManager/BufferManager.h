@@ -4,6 +4,7 @@
 #include"../Page/Page.h"
 #include"../Disk/Disk.h"
 #include"../Utils/myStrtok.h"
+#include"../Utils/infoSector.h"
 
 #include<vector>
 using namespace std;
@@ -56,7 +57,7 @@ public:
         delete [] buffer;
     }
 
-    int uploadPage(int nbloque, int l1, int l2, int n, int p, int q);
+    int uploadPage(int nbloque, int l1, int l2, vector<InfoSectores> info);
     int uploadPage(int numeroBloque);
 
     void uploadAllPages();
@@ -74,6 +75,8 @@ public:
     void printInfoSector(int sector);
 
     void printInfoRecord(int numberRecord);
+
+    void printInfoBloque(int numeroBloque);
 
     void save();
 };
@@ -93,5 +96,6 @@ public:
 #include"printInfoSector.h"
 #include"printInfoRecord.h"
 #include"save.h"
+#include"printInfoBloque.h"
 
 #endif

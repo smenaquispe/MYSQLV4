@@ -1,6 +1,5 @@
 type customer = record
-Index numeric(5)
-CustomerId varchar(20)
+Index numeric(8)
 FirstName varchar(50)
 LastName varchar(50)
 Company varchar(100)

@@ -3,6 +3,7 @@
 void BufferManager::printRecord(int idRecord) {
 
     Index * index = disk->tree->search({idRecord, 0});
+    if(!index) return;
 
     int numBloque = index->sect / this->NUMBER_SECTORS_PER_CLUSTER;
 

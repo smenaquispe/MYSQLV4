@@ -16,12 +16,13 @@ void BufferManager::deleteRecord(int idRecord) {
     }    
 
     Index * index = disk->tree->search({idRecord, 0});
+    if(!index) return;
 
     int numBloque = index->sect / this->NUMBER_SECTORS_PER_CLUSTER;
-    
+
     int pos = uploadPage(numBloque);
         // digamos que el frame(pages) tiene paginas
-        
+
     if(pages[pos].deleteRecord(idRecord)) {
         cout<<"Fue eliminado en el bloque: "<<tagPages[pos]<<endl;
         pages[pos].pinCount++;

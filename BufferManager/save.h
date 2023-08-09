@@ -8,7 +8,8 @@ void BufferManager::save() {
             cout<<"Desea guardar los cambios realizados en la pagina: "<<tagPages[cualMeQuede]<<" ? (s / n)"<<endl;
             cin>>res;
             if(res == 's') {
-                pages[cualMeQuede].saveSectors();
+                pages[cualMeQuede].saveSectors(this->disk);
+                pages[cualMeQuede].dirtyBit = 0;
             }
         }
         

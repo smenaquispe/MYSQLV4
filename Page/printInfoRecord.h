@@ -1,31 +1,15 @@
 #include"Page.h"
 
-int Page::printInfoRecord(int idRecord) {
+int Page::printInfoRecord(int numberSector) {
     
-    auto it = data.find(idRecord);
-    
-    // no se encontró
-    if(it == data.end()) {
-        return 0;
-    }
-
-    
-    int numeroSector;
-    for(auto it = sectores.begin(); it != sectores.end(); it++) {
-       for(int t : it->second) {
-        if(t == idRecord) {
-            numeroSector = it->first;
-            break;
+    cout<<"Se encuentra en el sector numero: "<<numberSector<<endl;
+    for(InfoSectores inf : infoSectores) {
+        if(inf.numeroSector == numberSector) {
+            cout<<"Se encuentra en el plato nro.: "<<inf.numeroPlato<<endl;
+            cout<<"Se encuentra en la superficie: "<<inf.numeroSuperficie<<endl;
+            cout<<"Se encuentra en la pista nro.: "<<inf.numeroPista<<endl;
         }
-       }
     }
 
-    cout<<"El record de id: "<<idRecord<<endl;
-    cout<<"Se encuentra en el sector: "<<numeroSector<<endl;
-    cout<<"Se encuentra en la pista: "<<numPista<<endl;
-    cout<<"Se encuentra en la superficie: "<<numSuperficie<<endl;
-    cout<<"Se encuentra en el plato: "<<numPlato<<endl;
-    
-
-    return 1;
+    return 0;
 }

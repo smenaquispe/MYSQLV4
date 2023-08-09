@@ -15,6 +15,7 @@
 #include"Disk/Disk.h"
 #include"Page/Page.h"
 #include"BufferManager/BufferManager.h"
+#include <chrono>
 
 using namespace std;
 
@@ -55,25 +56,25 @@ int main() {
     do
     {
         cout<<"-------DISCO-------"<<endl;
-        cout<<"1. Imprimir todos los registros"<<endl;
-        cout<<"2. Imprimir un registro"<<endl;
-        cout<<"3. Imprimir informacion de un registro"<<endl;
-        cout<<"4. Calcular la capacidad del disco"<<endl;
-        cout<<"5. Imprimir un sector"<<endl;
-        cout<<"6. Informacion de un sector"<<endl;
-        cout<<"7. Imprimir un bloque"<<endl;
-        cout<<"8. Informcacion de un bloque"<<endl;
-        cout<<"9. Agregar registro"<<endl;
-        cout<<"10. Remover registro"<<endl;
-        cout<<"11. Imprimir arbol"<<endl;
-        cout<<"12. Salir"<<endl;       
+        cout<<"1. Plato, superficie, pista y sector están los registros del bloque"<<endl;
+        cout<<"2. Consultar un registro"<<endl;
+        cout<<"3. Plato, superficie, pista y sector está un registro"<<endl;
+        cout<<"4. Adicionar registro"<<endl;
+        cout<<"5. Eliminar un registro"<<endl;
         cout<<"Digite su opcion: ";
         cin>>opc;
 
-
         switch (opc)
         {
-        case 1: manager.printAll(); break;
+        case 1: {
+            cout<<"Numero de bloque: ";
+            cin>>number;
+            auto start = std::chrono::high_resolution_clock::now();
+            manager.printInfoBloque(number);
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            cout<<"Tiempo de ejecucion: "<<duration<<" milisegundos"<<endl;
+        } break;
         case 2: {
             cout<<"Nunero de registro: "; 
             cin>>number;
@@ -83,11 +84,42 @@ int main() {
         case 3: {
             cout<<"Nunero de registro: "; 
             cin>>number;
+            auto start = std::chrono::high_resolution_clock::now();
             manager.printInfoRecord(number);
             cout<<endl;
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            cout<<"Tiempo de ejecucion: "<<duration<<" milisegundos"<<endl;
         } break;
-        case 4: manager.printInfoDisk(); break;
+        case 4: {
+            auto start = std::chrono::high_resolution_clock::now();
+            manager.addRecord();
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            cout<<"Tiempo de ejecucion: "<<duration<<" milisegundos"<<endl;
+            cout<<"Desea guardar los cambios? ";
+            cin>>res;
+            if(res == 's') {
+                manager.save();
+            }
+        } break;
         case 5: {
+            cout<<"Numero de registro: ";
+            cin>>number;
+            auto start = std::chrono::high_resolution_clock::now();
+            manager.deleteRecord(number);
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+            cout<<"Tiempo de ejecucion: "<<duration<<" milisegundos"<<endl;
+            cout<<"Desea guardar los cambios? ";
+            cin>>res;
+            if(res == 's') {
+                manager.save();
+                manager.disk->tree->remove({number, 0});
+            }
+        } break;
+        case 100: manager.printAll(); break;
+        case 500: {
             cout<<"Nombre de sector: ";
             cin>>number;
             manager.printSector(number);
@@ -103,17 +135,25 @@ int main() {
             manager.printPage(number);
         } break;
         case 8: {
-            cout<<"Numero de bloque: ";
-            cin>>number;
-            manager.getPage(number)->printSize();
-        } break;
+            } break;
         case 9: {
             manager.addRecord();
+            cout<<"Desea guardar los cambios? ";
+            cin>>res;
+            if(res == 's') {
+                manager.save();
+            }
         } break;
         case 10: {
             cout<<"Numero de registro: ";
             cin>>number;
             manager.deleteRecord(number);
+            cout<<"Desea guardar los cambios? ";
+            cin>>res;
+            if(res == 's') {
+                manager.save();
+                manager.disk->tree->remove({number, 0});
+            }
         } break;
         case 11: {
             manager.disk->tree->display();

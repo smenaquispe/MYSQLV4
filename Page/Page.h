@@ -7,6 +7,8 @@
 #include<vector>
 #include<cstring>
 
+#include"../Utils/infoSector.h"
+
 using namespace std;
 
 class Page
@@ -27,6 +29,7 @@ public:
     map<int, vector<string>> data; // esta es la informacion que la pagina levanta en memoria
     // sectores y los registros que guarda
     map<int, vector<int>> sectores;
+    vector<InfoSectores> infoSectores;
 
     // el cambio en cuanto a records
     int cambio = 0;
@@ -41,17 +44,15 @@ public:
     Page() {
     }
 
-    Page(int numeroBloque, int l1, int l2, int maximumSector, int n, int p, int q) {
+    Page(int numeroBloque, int l1, int l2, int maximumSector, vector<InfoSectores> infoSectores) {
+        
         this->l1 = l1;
         this->l2 = l2;
         this->maximumSector = maximumSector;
 
         this->numeroBloque = numeroBloque;
 
-        // seteamos la informacion de donde se ubica el bloque
-        this->numPlato = n;
-        this->numSuperficie = p;
-        this->numPista = q;
+        this->infoSectores = infoSectores;
 
         loadMeta();
         loadData();
@@ -62,7 +63,7 @@ public:
     int printSector(int numberSector);
     int findRecord(int idRecord);
     void loadMeta();
-    int addRecord();
+    vector<int> addRecord();
     int deleteRecord(int idRecord);
     bool hasSpace();
     void printInfo();
@@ -79,7 +80,7 @@ public:
     void loadData(int numeroSector);
 
     // funcion que permitirá guardar los cambios en disco
-    void saveSectors();
+    void saveSectors(Disk * disk);
 
     // imprimir informaciion de un solo record
     int printInfoRecord(int idRecord);

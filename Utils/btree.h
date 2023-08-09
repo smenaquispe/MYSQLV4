@@ -71,8 +71,7 @@ Index * BPTree::search(Index x, Node * init) {
   Node * cursor = init;
 
   int i = 0;
-  for(; i <= cursor->size; i++) {
-    
+  for(; i <= cursor->size; i++) {    
     if(i == cursor->size) 
      break;
     

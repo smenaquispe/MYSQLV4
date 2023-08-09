@@ -1,9 +1,8 @@
 #include"BufferManager.h"
 
-
-int BufferManager::uploadPage(int numeroBloque, int l1, int l2, int n, int p, int q) {
-
-    Page * page = new Page(numeroBloque, l1, l2, NUMBER_REGISTER_PER_SECTOR, n, p , q);
+int BufferManager::uploadPage(int numeroBloque, int l1, int l2, vector<InfoSectores> infoSectores) {
+    
+    Page * page = new Page(numeroBloque, l1, l2, NUMBER_REGISTER_PER_SECTOR, infoSectores);
 
     // buscamos que en el frame haya espacio libre
     while(true) {
@@ -30,7 +29,7 @@ int BufferManager::uploadPage(int numeroBloque, int l1, int l2, int n, int p, in
                 cout<<"Desea guardar los cambios realizados en la pagina: "<<tagPages[cualMeQuede]<<" ? (s / n)"<<endl;
                 cin>>res;
                 if(res == 's') {
-                    pages[cualMeQuede].saveSectors();
+                    pages[cualMeQuede].saveSectors(this->disk);
                 }
             }
 
@@ -69,21 +68,27 @@ int BufferManager::uploadPage(int numeroBloque) {
     int contPista = 0;
     int contSectores = 0;
 
+    vector<InfoSectores> infoSectores;
+
+    int l2 = l1;
     for(int i = 0; i <= disk->numTotalSectores; i++) {
         
-        if(i == l1) {
-            int l2 = l1 + NUMBER_SECTORS_PER_CLUSTER - 1;
-
+        if(i >= l1) {
+            infoSectores.push_back({l2, contPlato, contSuperficie, contPista});
+            l2++;
             // si es el ultimo bloque, no puede acceder a mas sectores
             if(l2 > disk->numTotalSectores) {
                 l2 = disk->numTotalSectores;
+                return uploadPage(numeroBloque, l1, l2, infoSectores);
             }
+        }
 
-            return uploadPage(numeroBloque, l1, l2, contPlato, contSuperficie, contPista);
-
+        if(l2 == l1 + NUMBER_SECTORS_PER_CLUSTER -1) {
+            return uploadPage(numeroBloque, l1, l2, infoSectores);
         }
 
         contSectores++;
+
 
         if(contSectores > disk->numSectores) {
             contSectores = 0;
