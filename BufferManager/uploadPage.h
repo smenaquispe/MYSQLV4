@@ -16,6 +16,7 @@ int BufferManager::uploadPage(int numeroBloque, int l1, int l2, vector<InfoSecto
                 cin>>res;
                 if(res == 'n') {
                     cualMeQuede++;
+                    cout<<"cual me quede: "<<cualMeQuede<<endl;
                     if(cualMeQuede == lenPages) {
                         cualMeQuede = 0;
                     }

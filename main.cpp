@@ -61,6 +61,7 @@ int main() {
         cout<<"3. Plato, superficie, pista y sector está un registro"<<endl;
         cout<<"4. Adicionar registro"<<endl;
         cout<<"5. Eliminar un registro"<<endl;
+        cout<<"6. Mostrar Buffer pool"<<endl;
         cout<<"Digite su opcion: ";
         cin>>opc;
 
@@ -118,13 +119,17 @@ int main() {
                 manager.disk->tree->remove({number, 0});
             }
         } break;
+        case 6: {
+            cout<<"Mostrando Buffer pool..."<<endl;
+            manager.mostrarBufferPool();
+        } break;
         case 100: manager.printAll(); break;
         case 500: {
             cout<<"Nombre de sector: ";
             cin>>number;
             manager.printSector(number);
         } break;
-        case 6: {
+        case 600: {
             cout<<"Nombre de sector: ";
             cin>>number;
             manager.printInfoSector(number);

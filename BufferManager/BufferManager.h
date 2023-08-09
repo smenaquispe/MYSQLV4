@@ -78,6 +78,8 @@ public:
 
     void printInfoBloque(int numeroBloque);
 
+    void mostrarBufferPool();
+
     void save();
 };
 
@@ -97,5 +99,6 @@ public:
 #include"printInfoRecord.h"
 #include"save.h"
 #include"printInfoBloque.h"
+#include"mostrarBufferPool.h"
 
 #endif
